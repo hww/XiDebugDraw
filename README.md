@@ -22,3 +22,7 @@ You can also install via git url by adding this entry in your manifest.json
 ```bash
 "com.hww.xidebugdraw": "https://github.com/hww/XiDebugDraw.git#upm"
 ```
+
+## Used Sources
+
+- [Unity Wireframe Shaders](https://github.com/Chaser324/unity-wireframe)
