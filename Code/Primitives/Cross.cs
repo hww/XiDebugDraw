@@ -1,21 +1,32 @@
-﻿using UnityEngine;
+﻿using CjLib;
+using UnityEngine;
 
 namespace XiDebugDraw.Primitives
 {
     public class Cross : Primitive
     {
-        public Vector3 position;
-        public float size;
+     
+        Matrix4x4 matrix;
+
+        public Cross()
+        {      
+        }
+
+        public void SetTransform(Vector3 position, float size)
+        {
+            matrix = Matrix4x4.TRS(position, Quaternion.identity, new(size, size, size));
+        }
 
         public override void Render ( )
         {
-            var x = new Vector3 ( size, 0, 0 );
-            var y = new Vector3 ( 0, size, 0 );
-            var z = new Vector3 ( 0, 0, size );
-            //Draw.color = color;
-            //Draw.Line3D ( position - x, position + x );
-            //Draw.Line3D ( position - y, position + y );
-            //Draw.Line3D ( position - z, position + z );
+            MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
+            materialProperties.SetColor("_Color", color);
+            materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+            materialProperties.SetFloat("_ZBias", s_wireframeZBias);
+
+            Graphics.DrawMesh(s_CrossMesh, matrix, s_PrimitiveMaterial, 0, null, 0, materialProperties, false, false, false);
         }
+
+
     }
 }

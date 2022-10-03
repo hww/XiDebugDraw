@@ -9,7 +9,6 @@ namespace XiDebugDraw.Primitives
 		public string text;
 		public float size;
 
-		GameObject gameObject;
 		TextMesh textMesh;
 		Transform transform;
 
@@ -20,12 +19,15 @@ namespace XiDebugDraw.Primitives
 
 		~Text()
 		{
-			GameObject.Destroy(gameObject);
+
+			textMesh = null;
+			GameObject.DestroyImmediate(transform.gameObject);
+			transform = null;
 		}
 
 		public override void Render ( )
         {
-			transform.LookAt(Camera.main.transform);
+			transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
 
 		public override void SetVisible(bool visible)
@@ -33,16 +35,20 @@ namespace XiDebugDraw.Primitives
 			if (visible)
             {
 				transform.position = position;
-				textMesh.text = text;
 				textMesh.characterSize = size;
+				textMesh.text = text;
 				textMesh.color = color;
+				transform.gameObject.SetActive(visible);
 			}
-			gameObject.SetActive(visible);
+			else
+            {
+				transform.gameObject.SetActive(visible);  
+			}
 		}
 
 		public void Create()
 		{
-			gameObject = new GameObject();
+			var gameObject = new GameObject();
 #if UNITY_EDITOR
 			gameObject.name = "XiDebugDrawText";
 			gameObject.hideFlags = HideFlags.HideInHierarchy;
@@ -52,19 +58,28 @@ namespace XiDebugDraw.Primitives
 			var meshRenderer = gameObject.AddComponent<MeshRenderer>();
 			textMesh = gameObject.AddComponent<TextMesh>();
 
-			meshRenderer.material = XiGraphics.m_XiDrawTextMeshMaterial;
+			meshRenderer.material = s_TextMeshMaterial;
 			meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
 			meshRenderer.receiveShadows = false;
-			meshRenderer.sharedMaterial = XiGraphics.m_XiDrawTextMeshMaterial;
+			meshRenderer.sharedMaterial = s_TextMeshMaterial;
 			meshRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
 			meshRenderer.lightProbeUsage = LightProbeUsage.Off;
 			meshRenderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
 
 
-			textMesh.font = XiGraphics.m_Font;
+            textMesh.font = s_Font;
 			textMesh.richText = true;
 
 			gameObject.SetActive(false);
 		}
+
+		public override void Dispose()
+		{
+			if (transform != null)
+				GameObject.DestroyImmediate(transform.gameObject);
+			textMesh = null;
+			transform = null;
+		}
+
 	}
 }
