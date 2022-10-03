@@ -26,3 +26,14 @@ You can also install via git url by adding this entry in your manifest.json
 ## Used Sources
 
 - [Unity Wireframe Shaders](https://github.com/Chaser324/unity-wireframe)
+- [Unity3d Runtime Debug Draw](https://github.com/jagt/unity3d-runtime-debug-draw)
+- [CJ Lib - Utility Library for Unity](https://github.com/TheAllenChou/unity-cj-lib)
+
+
+## ToDo
+
+- [ ] Add the gizmos API
+- [ ] To eliminate dependency on Unity3d Runtime Debug Draw
+- [ ] Add the line thicknes
+- [ ] Add the spline renderer
+- [ ] Performance optimization

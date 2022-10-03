@@ -1,29 +1,40 @@
-﻿using UnityEngine;
+﻿using CjLib;
+using UnityEngine;
 
 namespace XiDebugDraw.Primitives
 {
     public class Axes : Primitive
     {
-        public Transform transform;
-        public float size;
-        public Color color;
-        public bool depthEnabled;
+        static Mesh s_AxisMesh;
+        private Matrix4x4 matrix;
 
-        public Axes ( )
+        private static readonly Vector3[] lines =  {
+            new(0,0,0), new(10,0,0),
+            new(0,0,0), new(0,10,0),
+            new(0,0,0), new(0,0,10)
+            };
+        private static readonly Color[] colors =  {
+            new(1,0,0), new(1,0,0), new(0,1,0), new(0,1,0), new(0,0,1), new(0,0,1)
+            };
+
+        public Axes()
         {
-
+            s_AxisMesh ??= MakeLines(lines, colors);
+        }
+        public void SetTransform(Vector3 position, Quaternion rotation, float size)
+        {
+            matrix = Matrix4x4.TRS(position, rotation, new(size*0.1f, size * 0.1f, size * 0.1f));
         }
 
-        public override void Render ( )
+        public override void Render()
         {
-            //Draw.color = color;
-           // Draw.Cube ( transform.position, Vector3.one * size * 0.1f );
-            //Draw.color = Color.red;
-            //Draw.Line2D ( transform.position, transform.position + transform.forward * size);
-            //Draw.color = Color.green;
-            //Draw.Line2D ( transform.position, transform.position + transform.up * size );
-            //Draw.color = Color.blue;
-            //Draw.Line2D ( transform.position, transform.position + transform.right * size );
+            MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
+            materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+            materialProperties.SetFloat("_ZBias", s_wireframeZBias);
+            materialProperties.SetColor("_Color", Color.white);
+            Graphics.DrawMesh(s_AxisMesh, matrix, s_PrimitiveMaterial, 0, null, 0, materialProperties, false, false, false);
+            materialProperties.SetColor("_Color", color);
+            Graphics.DrawMesh(s_BoxMesh, matrix, s_PrimitiveMaterial, 0, null, 0, materialProperties, false, false, false);
         }
     }
 }
