@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/hww/XiDebugDraw/compare/v1.0.0...v1.1.0) (2022-10-03)
+
+
+### Features
+
+* **code:** Refactoring ([7f0fdf7](https://github.com/hww/XiDebugDraw/commit/7f0fdf7d03d359afce8995de4c24e88782126937))
+
 # 1.0.0 (2022-10-01)
 
 
