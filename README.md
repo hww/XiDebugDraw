@@ -38,55 +38,60 @@ You can also install via git url by adding this entry in your manifest.json
 - [ ] Add the spline renderer
 - [ ] Performance optimization
 
+## Known Issues
+
+Because it sues Graphics.DrawMesh method for rendering everything except a texts, the pause in the editor eliminates debuging info.
+To avoid the issue I use the pause shorcuts in the game.
+
 ## API
 
 
 ```C#
-public static void AddLine(Vector3 fromPosition, Vector3 toPosition,  Color color,  float lineWidth = 1.0f, 
-                           float duration = 0,bool depthEnabled = true);
+public static void AddLine     (Vector3 fromPosition, Vector3 toPosition,  Color color,  float lineWidth = 1.0f, 
+                                float duration = 0,bool depthEnabled = true);
                            
-public static void AddCross(Vector3 position, Color color, float size,
-                            float duration = 0, bool depthEnabled = true);
+public static void AddCross    (Vector3 position, Color color, float size,
+                                float duration = 0, bool depthEnabled = true);
                             
-public static void AddSphere(Vector3 position, float radius, Color color,
-                             float duration = 0, bool depthEnabled = true);
+public static void AddSphere   (Vector3 position, float radius, Color color,
+                                float duration = 0, bool depthEnabled = true);
                              
-public static void AddCircle(Vector3 position, Vector3 normal, float radius, Color color,
-                             float duration = 0, bool depthEnabled = true);
+public static void AddCircle   (Vector3 position, Vector3 normal, float radius, Color color,
+                                float duration = 0, bool depthEnabled = true);
                              
-public static void AddPlane(Vector3 position, Vector3 normal, float size, Color color,
-                            float duration = 0, bool depthEnabled = true);
+public static void AddPlane    (Vector3 position, Vector3 normal, float size, Color color,
+                                float duration = 0, bool depthEnabled = true);
                             
-public static void AddAxes(Transform transform, Color color, float size,
-                           float duration = 0, bool depthEnabled = true);
+public static void AddAxes     (Transform transform, Color color, float size,
+                                float duration = 0, bool depthEnabled = true);
                            
-public static void AddTriangle(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Color color, float lineWidth,
-                               float duration = 0, bool depthEnabled = true);
+public static void AddTriangle (Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Color color, float lineWidth,
+                                float duration = 0, bool depthEnabled = true);
                                
-public static void AddBox(Vector3 position, Quaternion rotation, Vector3 size, Color color,
-                          float duration = 0, bool depthEnabled = true);
+public static void AddBox      (Vector3 position, Quaternion rotation, Vector3 size, Color color,
+                                float duration = 0, bool depthEnabled = true);
                           
-public static void AddCone(Vector3 position, Quaternion rotation, float radius, float height, Color color,
-                           float duration = 0, bool depthEnabled = true);
+public static void AddCone     (Vector3 position, Quaternion rotation, float radius, float height, Color color,
+                                float duration = 0, bool depthEnabled = true);
                            
-public static void AddCylinder(Vector3 position, Quaternion rotation, float radius, float height, Color color, 
-                               float duration = 0, bool depthEnabled = true);
+public static void AddCylinder (Vector3 position, Quaternion rotation, float radius, float height, Color color, 
+                                float duration = 0, bool depthEnabled = true);
 
-public static void AddCube(Vector3 position, Quaternion rotation, float size, Color color, 
-                           float duration = 0, bool depthEnabled = true);
+public static void AddCube     (Vector3 position, Quaternion rotation, float size, Color color, 
+                                float duration = 0, bool depthEnabled = true);
 
-public static void AddRay    (Vector3 position, Vector3 direction, float size, Color color, 
-                             float duration = 0, bool depthEnabled = true);
+public static void AddRay      (Vector3 position, Vector3 direction, float size, Color color, 
+                                float duration = 0, bool depthEnabled = true);
 
-public static void AddAABB   (Vector3 minCoords, Vector3 maxCoord, Color color, float lineWidth, 
-                              float duration = 0, bool depthEnabled = true);
+public static void AddAABB     (Vector3 minCoords, Vector3 maxCoord, Color color, float lineWidth, 
+                                float duration = 0, bool depthEnabled = true);
 
-public static void AddAOBB   (Transform centerTransform, Vector3 scaleXYZ, Color color, float lineWidth, 
-                              float duration = 0, bool depthEnabled = true);
+public static void AddAOBB     (Transform centerTransform, Vector3 scaleXYZ, Color color, float lineWidth, 
+                                float duration = 0, bool depthEnabled = true);
 
-public static void AddCapsule(Vector3 position, Quaternion roation, float radius, float height, Color color, 
-                              float duration = 0, bool depthEnabled = true);
+public static void AddCapsule  (Vector3 position, Quaternion roation, float radius, float height, Color color, 
+                                float duration = 0, bool depthEnabled = true);
 
-public static void AddString (Vector3 position, string text, Color color, float size = 0.1f, 
-                              float duration = 0, bool depthEnabled = true);
+public static void AddString   (Vector3 position, string text, Color color, float size = 0.1f, 
+                                float duration = 0, bool depthEnabled = true);
 ```
