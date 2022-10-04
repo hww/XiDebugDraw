@@ -32,7 +32,7 @@ namespace CjLib
 
     private static Dictionary<int, Material> s_materialPool;
 
-    private static Material GetMaterial(Style style, bool depthTest, bool capShiftScale)
+    public static Material GetMaterial(Style style, bool depthTest, bool capShiftScale)
     {
       int key = 0;
 

@@ -1,27 +1,29 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace XiDebugDraw.Primitives
 {
-	public class Text : Primitive
+	public class Text : Primitive, IDisposable
 	{
 		public Vector3 position;
 		public string text;
 		public float size;
 
-		TextMesh textMesh;
-		Transform transform;
+		private TextMesh textMesh;
+		private Transform transform;
 
 		public Text()
         {
-			Create();
+
 		}
 
 		~Text()
 		{
+			//Debug.LogWarning("~Text");
 
-			textMesh = null;
 			GameObject.DestroyImmediate(transform.gameObject);
+			textMesh = null;
 			transform = null;
 		}
 
@@ -34,6 +36,8 @@ namespace XiDebugDraw.Primitives
 		{
 			if (visible)
             {
+				if (transform==null) 
+					Create();
 				transform.position = position;
 				textMesh.characterSize = size;
 				textMesh.text = text;
@@ -48,6 +52,8 @@ namespace XiDebugDraw.Primitives
 
 		public void Create()
 		{
+			UnityEngine.Debug.Assert(transform == null);
+			//Debug.LogWarning("Create");
 			var gameObject = new GameObject();
 #if UNITY_EDITOR
 			gameObject.name = "XiDebugDrawText";
@@ -73,8 +79,9 @@ namespace XiDebugDraw.Primitives
 			gameObject.SetActive(false);
 		}
 
-		public override void Dispose()
+		public void Dispose()
 		{
+			//Debug.LogWarning("Dispose");
 			if (transform != null)
 				GameObject.DestroyImmediate(transform.gameObject);
 			textMesh = null;

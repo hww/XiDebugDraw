@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using CjLib;
+using UnityEngine;
+using static CjLib.DebugUtil;
 
 namespace XiDebugDraw.Primitives
 {
@@ -6,30 +8,36 @@ namespace XiDebugDraw.Primitives
     {
         public Vector3 position;
         public Quaternion rotation;
-        public float radius;
-        public float heigth;
-        
+        float radius; float height;
 
-        public void SetTransform(Vector3 position, Quaternion rotation, float radius)
+        static Mesh s_CapsuleMesh;
+
+        public Capsule ()
         {
-           // var size = maxCoords - minCoords;
-           // var center = minCoords + (size * 0.5f);
-           // matrix = Matrix4x4.TRS(center, Quaternion.identity, size);
+            s_CapsuleMesh = PrimitiveMeshFactory.CapsuleWireframe(4, 12, true, false, true);
+
+        }
+
+        public void SetTransform(Vector3 position, Quaternion rotation, float radius, float height, Color color, bool depthEnabled)
+        {
+            this.position = position;
+            this.rotation = rotation;
+            this.radius = radius;
+            this.height = Mathf.Max(0, height - radius - radius);
+            this.color = color;
+            this.depthEnabled = depthEnabled;
         }
 
         public override void Render()
         {
-      //     MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
-      //     materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-      //     materialProperties.SetFloat("_ZBias", s_wireframeZBias);
-      //     materialProperties.SetColor("_Color", color);
-      //     Graphics.DrawMesh(s_BoxMesh, matrix, Primitive.s_PrimitiveMaterial, 0, null, 0, materialProperties, false, false, false);
+            var material = DebugUtil.GetMaterial(Style.Wireframe, depthEnabled, true);
+            var materialProperties = GetMaterialPropertyBlock();
+            materialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
+            materialProperties.SetColor("_Color", color);
+            materialProperties.SetFloat("_ZBias", s_wireframeZBias);
+            Graphics.DrawMesh(s_CapsuleMesh, position, rotation, material, 0, null, 0, materialProperties, false, false, false); ;
         }
 
-
-    //    public override void Render ( ) {
-    //        Primitive.DrawCapsule(position, rotation, objectsPlacementRadius, heigth, color, depthEnabled);
-    //    }
     }
 }
 
