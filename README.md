@@ -6,6 +6,7 @@
 [![](https://img.shields.io/github/license/hww/XiDebugDraw.svg)](https://github.com/hww/XiDebugDraw/blob/master/LICENSE)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
+![XiDebugDraw Title Image](/Documentation/title_image.png)
  
 Collection of primitives for rendering debug info created by [hww](https://github.com/hww)
 
