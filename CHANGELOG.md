@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/hww/XiDebugDraw/compare/v1.1.1...v1.1.2) (2022-10-04)
+
+
+### Bug Fixes
+
+* **code:** Re factored the Primitive class ([274ec90](https://github.com/hww/XiDebugDraw/commit/274ec90f6f367c1d906239b41212d90231daed72))
+
 ## [1.1.1](https://github.com/hww/XiDebugDraw/compare/v1.1.0...v1.1.1) (2022-10-04)
 
 
