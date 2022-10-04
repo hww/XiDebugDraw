@@ -18,7 +18,7 @@ namespace XiDebugDraw.Primitives
 
         }
 
-        public void SetTransform(Vector3 position, Quaternion rotation, float radius, float height, Color color, bool depthEnabled)
+        public void Init(Vector3 position, Quaternion rotation, float radius, float height, Color color, bool depthEnabled)
         {
             this.position = position;
             this.rotation = rotation;

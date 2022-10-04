@@ -12,9 +12,12 @@ namespace XiDebugDraw.Primitives
           
         }
 
-        public void SetTransform(Vector3 position, Quaternion rotation, Vector3 size)
+        public void Init(Vector3 position, Quaternion rotation, Vector3 size, Color color, float duration, bool depthEnabled)
         {
             matrix = Matrix4x4.TRS(position, rotation, size);
+            this.color = color;
+            this.duration = duration;
+            this.depthEnabled = depthEnabled;
         }
 
         public override void Render()

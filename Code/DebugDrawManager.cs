@@ -129,11 +129,7 @@ namespace XiDebugDraw
                                    bool depthEnabled = true)
         {
             var item = _line.Get();
-            item.SetTransform(fromPosition, toPosition);
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(fromPosition, toPosition, color, duration, depthEnabled);
         }
         [Conditional("_DEBUG")]
         public static void AddCross(Vector3 position,
@@ -143,11 +139,7 @@ namespace XiDebugDraw
                                     bool depthEnabled = true)
         {
             var item = _cross.Get();
-            item.SetTransform(position, size);
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(position, size, color, duration, depthEnabled);
         }
 
         [Conditional("_DEBUG")]
@@ -158,11 +150,7 @@ namespace XiDebugDraw
                                      bool depthEnabled = true)
         {
             var item = _spheres.Get();
-            item.SetTransform(position, radius);
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(position, radius, color, duration, depthEnabled);
         }
         [Conditional("_DEBUG")]
         public static void AddCircle(Vector3 position,
@@ -173,11 +161,7 @@ namespace XiDebugDraw
                                      bool depthEnabled = true)
         {
             var item = _circle.Get();
-            item.SetTransform(position, normal, radius);
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(position, normal, radius, color, duration, depthEnabled);
         }
         [Conditional("_DEBUG")]
         public static void AddPlane(Vector3 position,
@@ -188,11 +172,7 @@ namespace XiDebugDraw
                                      bool depthEnabled = true)
         {
             var item = _planes.Get();
-            item.SetTransform(position, normal, size);
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(position, normal, size, color, duration, depthEnabled);
         }
 
         [Conditional("_DEBUG")]
@@ -203,11 +183,10 @@ namespace XiDebugDraw
                                    bool depthEnabled = true)
         {
             var item = _axes.Get();
-            item.SetTransform(transform.position, transform.rotation,size);    
+            item.Init(transform.position, transform.rotation, size,color, duration, depthEnabled);    
             item.color = color;
             item.duration = duration;
             item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
         }
 
         [Conditional("_DEBUG")]
@@ -224,7 +203,6 @@ namespace XiDebugDraw
             item.color = color;
             item.duration = duration;
             item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
         }
 
         [Conditional("_DEBUG")]
@@ -236,11 +214,7 @@ namespace XiDebugDraw
                                   bool depthEnabled = true)
         {
             var item = _boxes.Get();
-            item.SetTransform(position, rotation, size);
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(position, rotation, size, color, duration, depthEnabled);
         }
         [Conditional("_DEBUG")]
         public static void AddCone(Vector3 position,
@@ -252,11 +226,7 @@ namespace XiDebugDraw
                           bool depthEnabled = true)
         {
             var item = _cones.Get();
-            item.SetTransform(position, rotation, radius, height);
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(position, rotation, radius, height, color, duration, depthEnabled);
         }
         [Conditional("_DEBUG")]
         public static void AddCylinder(Vector3 position,
@@ -268,11 +238,7 @@ namespace XiDebugDraw
                                  bool depthEnabled = true)
         {
             var item = _cylinders.Get();
-            item.SetTransform(position, rotation, radius, height);
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(position, rotation, radius, height, color, duration, depthEnabled);
         }
 
         [Conditional("_DEBUG")]
@@ -284,11 +250,7 @@ namespace XiDebugDraw
                                    bool depthEnabled = true)
         {
             var item = _boxes.Get();
-            item.SetTransform(position, rotation, new Vector3(size, size, size));
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(position, rotation, new Vector3(size, size, size), color, duration, depthEnabled);
         }
         [Conditional("_DEBUG")]
         public static void AddRay(Vector3 position,
@@ -299,11 +261,7 @@ namespace XiDebugDraw
                            bool depthEnabled = true)
         {
             var item = _ray.Get();
-            item.SetTransform(position, direction, size);
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(position, direction, size, color, duration, depthEnabled);
         }
 
 
@@ -316,12 +274,7 @@ namespace XiDebugDraw
                                    bool depthEnabled = true)
         {
             var item = _aabb.Get();
-            item.SetTransform(minCoords, maxCoord);
-            item.color = color;
-            item.lineWidth = lineWidth;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(minCoords, maxCoord, color, lineWidth, duration, depthEnabled);
         }
 
         [Conditional("_DEBUG")]
@@ -333,31 +286,10 @@ namespace XiDebugDraw
                                   bool depthEnabled = true)
         {
             var item = _aobb.Get();
-            item.SetTransform(centerTransform, scaleXYZ);
-            item.color = color;
-            item.lineWidth = lineWidth;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
+            item.Init(centerTransform, scaleXYZ, color, lineWidth, duration, depthEnabled);
         }
 
-        [Conditional("_DEBUG")]
-        public static void AddString(Vector3 position,
-                                  string text,
-                                  Color color,
-                                  float size = 0.1f,
-                                  float duration = 0,
-                                  bool depthEnabled = true)
-        {
-            var item = _text.Get();
-            item.position = position;
-            item.text = text;
-            item.size = size;
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
-            item.SetVisible(true);
-        }
+
         [Conditional("_DEBUG")] 
         public static void AddCapsule(Vector3 position,
                           Quaternion roation,
@@ -370,8 +302,19 @@ namespace XiDebugDraw
         {
             var item = _capsule.Get();
             item.duration = duration;
-            item.SetTransform(position,roation,radius,height,color, depthEnabled);
-            item.SetVisible(true);
+            item.Init(position,roation,radius,height,color, depthEnabled);
+        }
+
+        [Conditional("_DEBUG")]
+        public static void AddString(Vector3 position,
+                          string text,
+                          Color color,
+                          float size = 0.1f,
+                          float duration = 0,
+                          bool depthEnabled = true)
+        {
+            var item = _text.Get();
+            item.Init(position, text, color, size, duration, depthEnabled);
         }
     }
 }
