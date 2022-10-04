@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/hww/XiDebugDraw/compare/v1.1.0...v1.1.1) (2022-10-04)
+
+
+### Bug Fixes
+
+* **code:** Capsule renderer works ([3674a7d](https://github.com/hww/XiDebugDraw/commit/3674a7daffe75e4d2f2e0f3b914cb85c5df7d842))
+
 # [1.1.0](https://github.com/hww/XiDebugDraw/compare/v1.0.0...v1.1.0) (2022-10-03)
 
 
