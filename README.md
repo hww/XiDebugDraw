@@ -44,22 +44,31 @@ You can also install via git url by adding this entry in your manifest.json
 ```C#
 public static void AddLine(Vector3 fromPosition, Vector3 toPosition,  Color color,  float lineWidth = 1.0f, 
                            float duration = 0,bool depthEnabled = true);
+                           
 public static void AddCross(Vector3 position, Color color, float size,
                             float duration = 0, bool depthEnabled = true);
+                            
 public static void AddSphere(Vector3 position, float radius, Color color,
                              float duration = 0, bool depthEnabled = true);
+                             
 public static void AddCircle(Vector3 position, Vector3 normal, float radius, Color color,
                              float duration = 0, bool depthEnabled = true);
+                             
 public static void AddPlane(Vector3 position, Vector3 normal, float size, Color color,
                             float duration = 0, bool depthEnabled = true);
+                            
 public static void AddAxes(Transform transform, Color color, float size,
                            float duration = 0, bool depthEnabled = true);
+                           
 public static void AddTriangle(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Color color, float lineWidth,
                                float duration = 0, bool depthEnabled = true);
+                               
 public static void AddBox(Vector3 position, Quaternion rotation, Vector3 size, Color color,
                           float duration = 0, bool depthEnabled = true);
+                          
 public static void AddCone(Vector3 position, Quaternion rotation, float radius, float height, Color color,
                            float duration = 0, bool depthEnabled = true);
+                           
 public static void AddCylinder(Vector3 position, Quaternion rotation, float radius, float height, Color color, 
                                float duration = 0, bool depthEnabled = true);
 
