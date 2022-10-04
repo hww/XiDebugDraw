@@ -246,13 +246,13 @@ namespace XiDebugDraw
         public static void AddCone(Vector3 position,
                           Quaternion rotation,
                           float radius,
-                          float heigth,
+                          float height,
                           Color color,
                           float duration = 0,
                           bool depthEnabled = true)
         {
             var item = _cones.Get();
-            item.SetTransform(position, rotation, radius, heigth);
+            item.SetTransform(position, rotation, radius, height);
             item.color = color;
             item.duration = duration;
             item.depthEnabled = depthEnabled;
@@ -262,13 +262,13 @@ namespace XiDebugDraw
         public static void AddCylinder(Vector3 position,
                                  Quaternion rotation,
                                  float radius,
-                                 float heigth,
+                                 float height,
                                  Color color,
                                  float duration = 0,
                                  bool depthEnabled = true)
         {
             var item = _cylinders.Get();
-            item.SetTransform(position, rotation, radius, heigth);
+            item.SetTransform(position, rotation, radius, height);
             item.color = color;
             item.duration = duration;
             item.depthEnabled = depthEnabled;
@@ -363,19 +363,15 @@ namespace XiDebugDraw
                           Quaternion roation,
                           float radius,
 
-                          float heigth,
+                          float height,
                           Color color,
                           float duration = 0,
                           bool depthEnabled = true)
         {
             var item = _capsule.Get();
-            item.position = position;
-            item.rotation = roation;
-            item.radius = radius;
-            item.heigth = heigth;
-            item.color = color;
             item.duration = duration;
-            item.depthEnabled = depthEnabled;
+            item.SetTransform(position,roation,radius,height,color, depthEnabled);
+            item.SetVisible(true);
         }
     }
 }

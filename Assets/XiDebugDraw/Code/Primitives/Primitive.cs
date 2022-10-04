@@ -6,7 +6,7 @@ using UnityEngine;
 namespace XiDebugDraw.Primitives
 {
 
-    public partial class Primitive : IDisposable
+    public partial class Primitive 
     {
         // fields
         public LinkedListNode<Primitive> link;
@@ -117,11 +117,7 @@ namespace XiDebugDraw.Primitives
             return mesh;
         }
 
-        public virtual void Dispose()
-        {
-            s_materialProperties = null;
-        }
-
+    
         protected static float s_wireframeZBias = 1.0e-4f;
 
 
@@ -208,7 +204,6 @@ namespace XiDebugDraw.Primitives
             while (curent != null)
             {
                 var next = curent.Next;
-                curent.Value.Dispose();  
                 usedList.Remove(curent);
                 curent = next;
             }

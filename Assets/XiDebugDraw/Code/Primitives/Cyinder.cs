@@ -11,9 +11,9 @@ namespace XiDebugDraw.Primitives
         {
           
         }
-        public void SetTransform(Vector3 position, Quaternion rotation, float radius, float heigth)
+        public void SetTransform(Vector3 position, Quaternion rotation, float radius, float height)
         {
-            matrix = Matrix4x4.TRS(position, rotation, new Vector3(radius,heigth,radius));
+            matrix = Matrix4x4.TRS(position, rotation, new Vector3(radius,height,radius));
         }
 
 
