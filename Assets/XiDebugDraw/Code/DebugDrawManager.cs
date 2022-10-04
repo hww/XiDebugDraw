@@ -184,9 +184,6 @@ namespace XiDebugDraw
         {
             var item = _axes.Get();
             item.Init(transform.position, transform.rotation, size,color, duration, depthEnabled);    
-            item.color = color;
-            item.duration = duration;
-            item.depthEnabled = depthEnabled;
         }
 
         [Conditional("_DEBUG")]
@@ -278,7 +275,7 @@ namespace XiDebugDraw
         }
 
         [Conditional("_DEBUG")]
-        public static void AddAOBB(Matrix4x4 centerTransform,
+        public static void AddAOBB(Transform centerTransform,
                                   Vector3 scaleXYZ,
                                   Color color,
                                   float lineWidth,

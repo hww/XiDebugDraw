@@ -55,7 +55,7 @@ public class DebugDrawDemoItem : MonoBehaviour
                 DebugDrawManager.AddAABB(boxCollider.bounds.min, boxCollider.bounds.max, lineColor, lineWidth, duration, depthTest);
                 break;
             case Mode.AOBB:
-                DebugDrawManager.AddAOBB(transform.localToWorldMatrix, boxCollider.size, lineColor, lineWidth, duration, depthTest);
+                DebugDrawManager.AddAOBB(transform, boxCollider.size, lineColor, lineWidth, duration, depthTest);
                 break;
             case Mode.Axes:
                 DebugDrawManager.AddAxes(transform, lineColor, size, duration, depthTest);
