@@ -3,7 +3,7 @@
 ![](https://img.shields.io/badge/unity-2018.3%20or%20later-green.svg)
 [![⚙ Build and Release](https://github.com/hww/XiDebugDraw/actions/workflows/ci.yml/badge.svg)](https://github.com/hww/XiDebugDraw/actions/workflows/ci.yml)
 [![openupm](https://img.shields.io/npm/v/com.hww.xidebugdraw?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.hww.xidebugdraw/)
-[![](https://img.shields.io/github/license/hww/XiDebugDraw.svg)](https://github.com/hww/XiDebugDraw/blob/master/LICENSE)
+[![MIT](https://img.shields.io/github/license/hww/XiDebugDraw.svg)](https://github.com/hww/XiDebugDraw/blob/master/LICENSE)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
 ![XiDebugDraw Title Image](/Documentation/title_image.png)
