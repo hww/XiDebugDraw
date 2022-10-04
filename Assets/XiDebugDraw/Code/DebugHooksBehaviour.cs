@@ -1,9 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-/* Copyright (c) 2021 dr. ext (Vladimir Sigalkin) */
-
 using UnityEngine;
 
 namespace XiDebugDraw

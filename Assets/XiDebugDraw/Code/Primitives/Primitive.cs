@@ -26,7 +26,7 @@ namespace XiDebugDraw.Primitives
             throw new System.Exception();
         }
 
-        public virtual void SetVisible(bool visible)
+        public virtual void Deinit()
         {
 
         }
@@ -190,7 +190,7 @@ namespace XiDebugDraw.Primitives
                 }
                 else
                 {
-                    curent.Value.SetVisible(false);
+                    curent.Value.Deinit();
                     usedList.Remove(curent);
                     freeList.AddFirst(curent);
                 }

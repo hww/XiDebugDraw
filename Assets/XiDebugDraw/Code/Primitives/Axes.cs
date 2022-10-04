@@ -21,9 +21,12 @@ namespace XiDebugDraw.Primitives
         {
             s_AxisMesh ??= MakeLines(lines, colors);
         }
-        public void SetTransform(Vector3 position, Quaternion rotation, float size)
+        public void Init(Vector3 position, Quaternion rotation, float size, Color color, float duration, bool depthEnabled)
         {
             matrix = Matrix4x4.TRS(position, rotation, new(size*0.1f, size * 0.1f, size * 0.1f));
+            this.color = color;
+            this.duration = duration;
+            this.depthEnabled = depthEnabled;
         }
 
         public override void Render()

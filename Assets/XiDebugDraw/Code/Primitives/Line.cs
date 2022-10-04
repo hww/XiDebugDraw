@@ -19,12 +19,15 @@ namespace XiDebugDraw.Primitives
             lineMesh.SetIndices(lineIndices, MeshTopology.Lines, 0);
         }
 
-        public void SetTransform(Vector3 p0, Vector3 p1)
+        public void Init(Vector3 p0, Vector3 p1, Color color, float duration, bool depthEnabled)
         {
             lineVerts[0] = p0;
             lineVerts[1] = p1;
             lineMesh.SetVertices(lineVerts);
             lineMesh.SetIndices(lineIndices, MeshTopology.Lines, 0);
+            this.color = color;
+            this.duration = duration;
+            this.depthEnabled = depthEnabled;
         }
 
         public override void Render ( )

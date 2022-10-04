@@ -7,8 +7,6 @@ namespace XiDebugDraw.Primitives
 	public class Text : Primitive, IDisposable
 	{
 		public Vector3 position;
-		public string text;
-		public float size;
 
 		private TextMesh textMesh;
 		private Transform transform;
@@ -32,22 +30,25 @@ namespace XiDebugDraw.Primitives
 			transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
 
-		public override void SetVisible(bool visible)
+		public void Init(Vector3 position, string text, Color color, float size, float duration, bool depthEnabled)
+        {
+
+			if (transform == null)
+				Create();
+			this.position = position;
+			this.color = color;
+
+			transform.position = position;
+			textMesh.text = text;
+			textMesh.characterSize = size;
+			textMesh.color = color;
+			this.duration = duration;
+			this.depthEnabled = depthEnabled;
+			transform.gameObject.SetActive(true);
+		}
+		public override void Deinit()
 		{
-			if (visible)
-            {
-				if (transform==null) 
-					Create();
-				transform.position = position;
-				textMesh.characterSize = size;
-				textMesh.text = text;
-				textMesh.color = color;
-				transform.gameObject.SetActive(visible);
-			}
-			else
-            {
-				transform.gameObject.SetActive(visible);  
-			}
+			transform.gameObject.SetActive(false);  
 		}
 
 		public void Create()
@@ -75,7 +76,6 @@ namespace XiDebugDraw.Primitives
 
             textMesh.font = s_Font;
 			textMesh.richText = true;
-
 			gameObject.SetActive(false);
 		}
 

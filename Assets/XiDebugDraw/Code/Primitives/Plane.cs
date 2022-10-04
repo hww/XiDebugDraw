@@ -12,12 +12,15 @@ namespace XiDebugDraw.Primitives
        
         }
 
-        public void SetTransform(Vector3 position, Vector3 normal, float size)
+        public void Init(Vector3 position, Vector3 normal, float size, Color color, float duration, bool depthEnabled)
         {
             Vector3 normalCrosser = Mathf.Abs(Vector3.Dot(normal, Vector3.up)) < 0.5f ? Vector3.up : Vector3.forward;
             Vector3 tangent = Vector3.Normalize(Vector3.Cross(normalCrosser, normal));
             Quaternion rotation = Quaternion.LookRotation(tangent, normal);
             matrix = Matrix4x4.TRS(position, rotation, new Vector3(size, size, size));
+            this.color = color;
+            this.duration = duration;
+            this.depthEnabled = depthEnabled;
         }
 
         public override void Render()

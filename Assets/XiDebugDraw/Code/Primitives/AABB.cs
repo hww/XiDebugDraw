@@ -11,11 +11,16 @@ namespace XiDebugDraw.Primitives
         public AABB()
         {
         }
-        public void SetTransform(Vector3 minCoords, Vector3 maxCoords)
+        public void Init(Vector3 minCoords, Vector3 maxCoords, Color color, float lineWidth, float duration, bool depthEnabled)
         {
             var size = maxCoords - minCoords;
             var center = minCoords + (size * 0.5f);
             matrix = Matrix4x4.TRS(center, Quaternion.identity, size);
+            this.color = color;
+            this.lineWidth = lineWidth;
+            this.duration = duration;
+            this.depthEnabled = depthEnabled;
+
         }
 
         public override void Render()
