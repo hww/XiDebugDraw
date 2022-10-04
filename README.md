@@ -75,18 +75,18 @@ public static void AddCylinder(Vector3 position, Quaternion rotation, float radi
 public static void AddCube(Vector3 position, Quaternion rotation, float size, Color color, 
                            float duration = 0, bool depthEnabled = true);
 
-public static void AddRay(Vector3 position, Vector3 direction, float size, Color color, 
-                          float duration = 0, bool depthEnabled = true);
+public static void AddRay    (Vector3 position, Vector3 direction, float size, Color color, 
+                             float duration = 0, bool depthEnabled = true);
 
-public static void AddAABB(Vector3 minCoords, Vector3 maxCoord, Color color, float lineWidth, 
-                           float duration = 0, bool depthEnabled = true);
+public static void AddAABB   (Vector3 minCoords, Vector3 maxCoord, Color color, float lineWidth, 
+                              float duration = 0, bool depthEnabled = true);
 
-public static void AddAOBB(Transform centerTransform, Vector3 scaleXYZ, Color color, float lineWidth, 
-                           float duration = 0, bool depthEnabled = true);
+public static void AddAOBB   (Transform centerTransform, Vector3 scaleXYZ, Color color, float lineWidth, 
+                              float duration = 0, bool depthEnabled = true);
 
 public static void AddCapsule(Vector3 position, Quaternion roation, float radius, float height, Color color, 
                               float duration = 0, bool depthEnabled = true);
 
-public static void AddString(Vector3 position, string text, Color color, float size = 0.1f, 
-                             float duration = 0, bool depthEnabled = true);
+public static void AddString (Vector3 position, string text, Color color, float size = 0.1f, 
+                              float duration = 0, bool depthEnabled = true);
 ```
