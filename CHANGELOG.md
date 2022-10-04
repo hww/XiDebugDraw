@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/hww/XiDebugDraw/compare/v1.1.2...v1.1.3) (2022-10-04)
+
+
+### Bug Fixes
+
+* **code:** Minor changes ([eee7b97](https://github.com/hww/XiDebugDraw/commit/eee7b97187bdf25b87510ebe6ba23ba3acb9c22c))
+
 ## [1.1.2](https://github.com/hww/XiDebugDraw/compare/v1.1.1...v1.1.2) (2022-10-04)
 
 
