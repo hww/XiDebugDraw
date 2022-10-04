@@ -10,9 +10,9 @@ namespace XiDebugDraw.Primitives
         public AOBB()
         {
         }
-        public void Init(Matrix4x4 centerTransform, Vector3 scaleXYZ, Color color, float lineWidth, float duration, bool depthEnabled)
+        public void Init(Transform centerTransform, Vector3 scaleXYZ, Color color, float lineWidth, float duration, bool depthEnabled)
         {
-            matrix = Matrix4x4.TRS(centerTransform.GetPosition(), centerTransform.rotation, scaleXYZ);
+            matrix = Matrix4x4.TRS(centerTransform.position, centerTransform.rotation, scaleXYZ);
             this.color = color;
             this.lineWidth = lineWidth;
             this.duration = duration;
