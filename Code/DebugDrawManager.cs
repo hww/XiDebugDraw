@@ -8,117 +8,158 @@ using Color = UnityEngine.Color;
 using Transform = UnityEngine.Transform;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Quaternion = UnityEngine.Quaternion;
+using System.Collections.Generic;
+using Material = UnityEngine.Material;
+using MaterialPropertyBlock = UnityEngine.MaterialPropertyBlock;
+
+using static CjLib.DebugUtil;
 
 namespace XiDebugDraw
 {
     public static class DebugDrawManager
     {
         static bool isInitialized = false;
-        static PrimitivesPool<Line> _line;
-        static PrimitivesPool<AABB> _aabb;
-        static PrimitivesPool<AOBB> _aobb;
-        static PrimitivesPool<Axes> _axes;
-        static PrimitivesPool<Box> _boxes;
-        static PrimitivesPool<Cone> _cones;
-        static PrimitivesPool<Cylinder> _cylinders;
-        static PrimitivesPool<Circle> _circle;
-        static PrimitivesPool<Cross> _cross;
-        static PrimitivesPool<Ray> _ray;
-        static PrimitivesPool<Sphere> _spheres;
-        static PrimitivesPool<Text> _text;
-        static PrimitivesPool<Triangle> _triangle;
-        static PrimitivesPool<Capsule> _capsule;
+        static PrimitivesPool<Line> s_Lines;
+        static PrimitivesPool<AABB> s_AABBs;
+        static PrimitivesPool<AOBB> s_AOBBs;
+        static PrimitivesPool<Axes> s_Axes;
+        static PrimitivesPool<Box> s_Boxes;
+        static PrimitivesPool<Cone> s_Cones;
+        static PrimitivesPool<Cylinder> s_Cylinders;
+        static PrimitivesPool<Circle> s_Circles;
+        static PrimitivesPool<Cross> s_Crosses;
+        static PrimitivesPool<Ray> s_Rays;
+        static PrimitivesPool<Plane> s_Planes;
+        static PrimitivesPool<Sphere> s_Spheres;
+        static PrimitivesPool<Text> s_Strings;
+        static PrimitivesPool<Triangle> s_Triangles;
+        static PrimitivesPool<Capsule> s_Capsules;
 
-        static PrimitivesPool<Plane> _planes;
-
+        static LinkedList<Primitive> s_PrimitivesDepthEnabled;
+        static LinkedList<Primitive> s_PrimitivesDepthDisabled;
+        
         [Conditional("_DEBUG")]
         public static void Initialize()
         {
             if (!isInitialized)
             {
                 Primitive.Initialize();
-                _line = new PrimitivesPool<Line>(8);
-                _aabb = new PrimitivesPool<AABB>(8);
-                _aobb = new PrimitivesPool<AOBB>(8);
-                _axes = new PrimitivesPool<Axes>(8);
-                _boxes = new PrimitivesPool<Box>(8);
-                _cones = new PrimitivesPool<Cone>(8);
-                _cylinders = new PrimitivesPool<Cylinder>(8);
-                _circle = new PrimitivesPool<Circle>(8);
-                _cross = new PrimitivesPool<Cross>(8);
-                _ray = new PrimitivesPool<Ray>(8);
-                _planes = new PrimitivesPool<Plane>(8);
-                _spheres = new PrimitivesPool<Sphere>(8);
-                _text = new PrimitivesPool<Text>(8);
-                _triangle = new PrimitivesPool<Triangle>(8);
-                _capsule = new PrimitivesPool<Capsule>(8);
+                s_Lines = new PrimitivesPool<Line>(8);
+                s_AABBs = new PrimitivesPool<AABB>(8);
+                s_AOBBs = new PrimitivesPool<AOBB>(8);
+                s_Axes = new PrimitivesPool<Axes>(8);
+                s_Boxes = new PrimitivesPool<Box>(8);
+                s_Cones = new PrimitivesPool<Cone>(8);
+                s_Cylinders = new PrimitivesPool<Cylinder>(8);
+                s_Circles = new PrimitivesPool<Circle>(8);
+                s_Crosses = new PrimitivesPool<Cross>(8);
+                s_Rays = new PrimitivesPool<Ray>(8);
+                s_Planes = new PrimitivesPool<Plane>(8);
+                s_Spheres = new PrimitivesPool<Sphere>(8);
+                s_Strings = new PrimitivesPool<Text>(8);
+                s_Triangles = new PrimitivesPool<Triangle>(8);
+                s_Capsules = new PrimitivesPool<Capsule>(8);
+                s_PrimitivesDepthEnabled = new ();
+                s_PrimitivesDepthDisabled = new();
                 isInitialized = true;
             }
         }
         [Conditional("_DEBUG")]
         public static void Deinitialize()
         {
-            _line.Clear();  
-            _aabb.Clear();
-            _aobb.Clear();
-            _axes.Clear();
-            _boxes.Clear();
-            _cones.Clear();
-            _cylinders.Clear();
-            _circle.Clear();
-            _cross.Clear();
-            _ray.Clear();
-            _planes.Clear();
-            _spheres.Clear();
-            _text.Clear();
-            _triangle.Clear();
-            _capsule.Clear();
-        }
-        [Conditional("_DEBUG")]
-        public static void Render()
-        {
-            var dt = UnityEngine.Time.deltaTime;
-            _line.Render(dt);
-            _aabb.Render(dt);
-            _aobb.Render(dt);
-            _axes.Render(dt);
-            _boxes.Render(dt);
-            _circle.Render(dt);
-            _cross.Render(dt);
-            _ray.Render(dt);
-            _spheres.Render(dt);
-            _cones.Render(dt);
-            _cylinders.Render(dt);
-            _planes.Render(dt);
-            _text.Render(dt);
-            _triangle.Render(dt);
-            _capsule.Render(dt);
+            s_Lines.Clear();  
+            s_AABBs.Clear();
+            s_AOBBs.Clear();
+            s_Axes.Clear();
+            s_Boxes.Clear();
+            s_Cones.Clear();
+            s_Cylinders.Clear();
+            s_Circles.Clear();
+            s_Crosses.Clear();
+            s_Rays.Clear();
+            s_Planes.Clear();
+            s_Spheres.Clear();
+            s_Strings.Clear();
+            s_Triangles.Clear();
+            s_Capsules.Clear();
+            s_PrimitivesDepthEnabled.Clear();
+            s_PrimitivesDepthDisabled.Clear();
+            isInitialized = false;
         }
 
-        public static string GetStatistics()
+        public static void GetStatistics(out int used, out int free)
         {
             if (isInitialized)
             {
-                var dt = UnityEngine.Time.deltaTime;
-                var sb = new System.Text.StringBuilder();
-                sb.AppendLine(_line.GetStatistics());
-                sb.AppendLine(_aabb.GetStatistics());
-                sb.AppendLine(_aobb.GetStatistics());
-                sb.AppendLine(_axes.GetStatistics());
-                sb.AppendLine(_boxes.GetStatistics());
-                sb.AppendLine(_circle.GetStatistics());
-                sb.AppendLine(_cross.GetStatistics());
-                sb.AppendLine(_ray.GetStatistics());
-                sb.AppendLine(_spheres.GetStatistics());
-                sb.AppendLine(_text.GetStatistics());
-                sb.AppendLine(_triangle.GetStatistics());
-                sb.AppendLine(_capsule.GetStatistics());
-                return sb.ToString();
+
+                free = s_Lines.CountFree +
+                s_AABBs.CountFree +
+                s_AOBBs.CountFree +
+                s_Axes.CountFree +
+                s_Boxes.CountFree +
+                s_Cones.CountFree +
+                s_Cylinders.CountFree +
+                s_Circles.CountFree +
+                s_Crosses.CountFree +
+                s_Rays.CountFree +
+                s_Planes.CountFree +
+                s_Spheres.CountFree +
+                s_Strings.CountFree +
+                s_Triangles.CountFree +
+                s_Capsules.CountFree;
+
+                used = s_PrimitivesDepthDisabled.Count + s_PrimitivesDepthEnabled.Count;
             }
             else
-                return string.Empty;
+            {
+                used = 0 ;
+                free = 0 ;
+            }
         }
 
+        [Conditional("_DEBUG")]
+        internal static void Render()
+        {
+            var dt = UnityEngine.Time.deltaTime;
+            var materialProperties = Primitive.GetMaterialPropertyBlock();
+            materialProperties.SetFloat("_ZBias", Primitive.s_wireframeZBias);
+
+            var materialDepthEnabled = GetMaterial(Style.Wireframe, true, false);
+            Render(dt, s_PrimitivesDepthEnabled, materialDepthEnabled, materialProperties);
+
+            var materialDepthDisabled = GetMaterial(Style.Wireframe, false, false);
+            Render(dt, s_PrimitivesDepthDisabled, materialDepthDisabled, materialProperties);
+        }
+
+        private static void Render(float dt, LinkedList<Primitive> list, Material material, MaterialPropertyBlock materialProperties)
+        {
+            var curent = list.First;
+            while (curent != null)
+            {
+                var next = curent.Next;
+                var prim = curent.Value;
+                if (prim.duration >= 0)
+                {
+                    prim.Render(material, materialProperties);
+                    prim.duration -= dt;
+                }
+                else
+                {
+                    prim.Deinit();
+                    list.Remove(curent);
+                    prim.pool.Release(prim);
+                }
+                curent = next;
+            }
+        }
+
+        private static void AddPrimitive(Primitive primitive)
+        {
+            if (primitive.depthEnabled)
+                s_PrimitivesDepthEnabled.AddFirst(primitive);
+            else
+                s_PrimitivesDepthDisabled.AddFirst(primitive);
+        }
 
         [Conditional("_DEBUG")]
         public static void AddLine(Vector3 fromPosition,
@@ -128,9 +169,11 @@ namespace XiDebugDraw
                                    float duration = 0,
                                    bool depthEnabled = true)
         {
-            var item = _line.Get();
+            var item = s_Lines.Get();
             item.Init(fromPosition, toPosition, color, duration, depthEnabled);
+            AddPrimitive(item);
         }
+
         [Conditional("_DEBUG")]
         public static void AddCross(Vector3 position,
                                     Color color,
@@ -138,8 +181,9 @@ namespace XiDebugDraw
                                     float duration = 0,
                                     bool depthEnabled = true)
         {
-            var item = _cross.Get();
+            var item = s_Crosses.Get();
             item.Init(position, size, color, duration, depthEnabled);
+            AddPrimitive(item);
         }
 
         [Conditional("_DEBUG")]
@@ -149,9 +193,11 @@ namespace XiDebugDraw
                                      float duration = 0,
                                      bool depthEnabled = true)
         {
-            var item = _spheres.Get();
+            var item = s_Spheres.Get();
             item.Init(position, radius, color, duration, depthEnabled);
+            AddPrimitive(item);
         }
+
         [Conditional("_DEBUG")]
         public static void AddCircle(Vector3 position,
                                      Vector3 normal,
@@ -160,9 +206,11 @@ namespace XiDebugDraw
                                      float duration = 0,
                                      bool depthEnabled = true)
         {
-            var item = _circle.Get();
+            var item = s_Circles.Get();
             item.Init(position, normal, radius, color, duration, depthEnabled);
+            AddPrimitive(item);
         }
+
         [Conditional("_DEBUG")]
         public static void AddPlane(Vector3 position,
                                      Vector3 normal,
@@ -171,8 +219,9 @@ namespace XiDebugDraw
                                      float duration = 0,
                                      bool depthEnabled = true)
         {
-            var item = _planes.Get();
+            var item = s_Planes.Get();
             item.Init(position, normal, size, color, duration, depthEnabled);
+            AddPrimitive(item);
         }
 
         [Conditional("_DEBUG")]
@@ -182,8 +231,9 @@ namespace XiDebugDraw
                                    float duration = 0,
                                    bool depthEnabled = true)
         {
-            var item = _axes.Get();
-            item.Init(transform.position, transform.rotation, size,color, duration, depthEnabled);    
+            var item = s_Axes.Get();
+            item.Init(transform.position, transform.rotation, size,color, duration, depthEnabled);
+            AddPrimitive(item);
         }
 
         [Conditional("_DEBUG")]
@@ -195,11 +245,12 @@ namespace XiDebugDraw
                                        float duration = 0,
                                        bool depthEnabled = true)
         {
-            var item = _triangle.Get();
+            var item = s_Triangles.Get();
             item.SetTransform(vertex0, vertex1, vertex2);
             item.color = color;
             item.duration = duration;
             item.depthEnabled = depthEnabled;
+            AddPrimitive(item);
         }
 
         [Conditional("_DEBUG")]
@@ -210,9 +261,11 @@ namespace XiDebugDraw
                                   float duration = 0,
                                   bool depthEnabled = true)
         {
-            var item = _boxes.Get();
+            var item = s_Boxes.Get();
             item.Init(position, rotation, size, color, duration, depthEnabled);
+            AddPrimitive(item);
         }
+
         [Conditional("_DEBUG")]
         public static void AddCone(Vector3 position,
                           Quaternion rotation,
@@ -222,9 +275,11 @@ namespace XiDebugDraw
                           float duration = 0,
                           bool depthEnabled = true)
         {
-            var item = _cones.Get();
+            var item = s_Cones.Get();
             item.Init(position, rotation, radius, height, color, duration, depthEnabled);
+            AddPrimitive(item);
         }
+
         [Conditional("_DEBUG")]
         public static void AddCylinder(Vector3 position,
                                  Quaternion rotation,
@@ -234,8 +289,9 @@ namespace XiDebugDraw
                                  float duration = 0,
                                  bool depthEnabled = true)
         {
-            var item = _cylinders.Get();
+            var item = s_Cylinders.Get();
             item.Init(position, rotation, radius, height, color, duration, depthEnabled);
+            AddPrimitive(item);
         }
 
         [Conditional("_DEBUG")]
@@ -246,9 +302,11 @@ namespace XiDebugDraw
                                    float duration = 0,
                                    bool depthEnabled = true)
         {
-            var item = _boxes.Get();
+            var item = s_Boxes.Get();
             item.Init(position, rotation, new Vector3(size, size, size), color, duration, depthEnabled);
+            AddPrimitive(item);
         }
+
         [Conditional("_DEBUG")]
         public static void AddRay(Vector3 position,
                            Vector3 direction,
@@ -257,10 +315,10 @@ namespace XiDebugDraw
                            float duration = 0,
                            bool depthEnabled = true)
         {
-            var item = _ray.Get();
+            var item = s_Rays.Get();
             item.Init(position, direction, size, color, duration, depthEnabled);
+            AddPrimitive(item);
         }
-
 
         [Conditional("_DEBUG")]
         public static void AddAABB(Vector3 minCoords,
@@ -270,8 +328,9 @@ namespace XiDebugDraw
                                    float duration = 0,
                                    bool depthEnabled = true)
         {
-            var item = _aabb.Get();
+            var item = s_AABBs.Get();
             item.Init(minCoords, maxCoord, color, lineWidth, duration, depthEnabled);
+            AddPrimitive(item);
         }
 
         [Conditional("_DEBUG")]
@@ -282,10 +341,10 @@ namespace XiDebugDraw
                                   float duration = 0,
                                   bool depthEnabled = true)
         {
-            var item = _aobb.Get();
+            var item = s_AOBBs.Get();
             item.Init(centerTransform, scaleXYZ, color, lineWidth, duration, depthEnabled);
+            AddPrimitive(item);
         }
-
 
         [Conditional("_DEBUG")] 
         public static void AddCapsule(Vector3 position,
@@ -297,9 +356,10 @@ namespace XiDebugDraw
                           float duration = 0,
                           bool depthEnabled = true)
         {
-            var item = _capsule.Get();
+            var item = s_Capsules.Get();
             item.duration = duration;
             item.Init(position,roation,radius,height,color, depthEnabled);
+            AddPrimitive(item);
         }
 
         [Conditional("_DEBUG")]
@@ -310,8 +370,9 @@ namespace XiDebugDraw
                           float duration = 0,
                           bool depthEnabled = true)
         {
-            var item = _text.Get();
+            var item = s_Strings.Get();
             item.Init(position, text, color, size, duration, depthEnabled);
+            AddPrimitive(item);
         }
     }
 }

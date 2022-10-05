@@ -4,7 +4,7 @@ using static CjLib.DebugUtil;
 
 namespace XiDebugDraw.Primitives
 {
-    public class Capsule : Primitive
+    public sealed class Capsule : Primitive
     {
         public Vector3 position;
         public Quaternion rotation;
@@ -15,10 +15,9 @@ namespace XiDebugDraw.Primitives
         public Capsule ()
         {
             s_CapsuleMesh = PrimitiveMeshFactory.CapsuleWireframe(4, 12, true, false, true);
-
         }
 
-        public void Init(Vector3 position, Quaternion rotation, float radius, float height, Color color, bool depthEnabled)
+        internal void Init(Vector3 position, Quaternion rotation, float radius, float height, Color color, bool depthEnabled)
         {
             this.position = position;
             this.rotation = rotation;
@@ -28,13 +27,10 @@ namespace XiDebugDraw.Primitives
             this.depthEnabled = depthEnabled;
         }
 
-        public override void Render()
+        internal override void Render(Material material, MaterialPropertyBlock materialProperties)
         {
-            var material = DebugUtil.GetMaterial(Style.Wireframe, depthEnabled, true);
-            var materialProperties = GetMaterialPropertyBlock();
             materialProperties.SetVector("_Dimensions", new Vector4(radius, radius, radius, height));
             materialProperties.SetColor("_Color", color);
-            materialProperties.SetFloat("_ZBias", s_wireframeZBias);
             Graphics.DrawMesh(s_CapsuleMesh, position, rotation, material, 0, null, 0, materialProperties, false, false, false); ;
         }
 

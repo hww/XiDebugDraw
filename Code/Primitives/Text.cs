@@ -4,9 +4,9 @@ using UnityEngine.Rendering;
 
 namespace XiDebugDraw.Primitives
 {
-	public class Text : Primitive, IDisposable
+	public sealed class Text : Primitive, IDisposable
 	{
-		public Vector3 position;
+		internal Vector3 position;
 
 		private TextMesh textMesh;
 		private Transform transform;
@@ -25,12 +25,12 @@ namespace XiDebugDraw.Primitives
 			transform = null;
 		}
 
-		public override void Render ( )
-        {
+		internal override void Render(Material material, MaterialPropertyBlock materialProperties)
+		{
 			transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position);
 		}
 
-		public void Init(Vector3 position, string text, Color color, float size, float duration, bool depthEnabled)
+		internal void Init(Vector3 position, string text, Color color, float size, float duration, bool depthEnabled)
         {
 
 			if (transform == null)
@@ -46,12 +46,12 @@ namespace XiDebugDraw.Primitives
 			this.depthEnabled = depthEnabled;
 			transform.gameObject.SetActive(true);
 		}
-		public override void Deinit()
+		internal override void Deinit()
 		{
 			transform.gameObject.SetActive(false);  
 		}
 
-		public void Create()
+		internal void Create()
 		{
 			UnityEngine.Debug.Assert(transform == null);
 			//Debug.LogWarning("Create");
