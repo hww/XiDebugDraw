@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/hww/XiDebugDraw/compare/v1.1.3...v1.1.4) (2022-10-05)
+
+
+### Bug Fixes
+
+* **refactoring:** Restructured pool for better order of rendering ([e2e0f6c](https://github.com/hww/XiDebugDraw/commit/e2e0f6c1fe70cf586f1e0b044b30aafe37dc6b68))
+
 ## [1.1.3](https://github.com/hww/XiDebugDraw/compare/v1.1.2...v1.1.3) (2022-10-04)
 
 
