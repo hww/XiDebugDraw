@@ -2,15 +2,15 @@
 
 namespace XiDebugDraw.Primitives
 {
-    public class AOBB : Primitive
+    public sealed class AOBB : Primitive
     {
-        public float lineWidth = 1;
+        internal float lineWidth = 1;
         private Matrix4x4 matrix;
 
         public AOBB()
         {
         }
-        public void Init(Transform centerTransform, Vector3 scaleXYZ, Color color, float lineWidth, float duration, bool depthEnabled)
+        internal void Init(Transform centerTransform, Vector3 scaleXYZ, Color color, float lineWidth, float duration, bool depthEnabled)
         {
             matrix = Matrix4x4.TRS(centerTransform.position, centerTransform.rotation, scaleXYZ);
             this.color = color;
@@ -19,13 +19,11 @@ namespace XiDebugDraw.Primitives
             this.depthEnabled = depthEnabled;
         }
 
-        public override void Render()
+        internal override void Render(Material material, MaterialPropertyBlock materialProperties)
         {
-            MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
-            materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-            materialProperties.SetFloat("_ZBias", s_wireframeZBias);
             materialProperties.SetColor("_Color", color);
-            Graphics.DrawMesh(s_BoxMesh, matrix, s_PrimitiveMaterial, 0, null, 0, materialProperties, false, false, false);
+            materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+            Graphics.DrawMesh(s_BoxMesh, matrix, material, 0, null, 0, materialProperties, false, false, false);
         }
 
     }

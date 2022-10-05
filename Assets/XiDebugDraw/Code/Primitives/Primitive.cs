@@ -6,44 +6,43 @@ using UnityEngine;
 namespace XiDebugDraw.Primitives
 {
 
-    public partial class Primitive 
+    public class Primitive
     {
         // fields
-        public LinkedListNode<Primitive> link;
-        public float duration = 0f;
-        public bool depthEnabled;
-        public Color color;
+        internal IBasePool pool;
+        internal LinkedListNode<Primitive> link;
+        internal float duration = 0f;
+        internal bool depthEnabled;
+        internal Color color;
 
 
         // constructors
-        public Primitive ()
+        public Primitive()
         {
-            link = new LinkedListNode<Primitive> ( this );
+            link = new LinkedListNode<Primitive>(this);
         }
 
-        public virtual void Render ( )
+        internal virtual void Render(Material material, MaterialPropertyBlock materialProperties)
         {
             throw new System.Exception();
         }
 
-        public virtual void Deinit()
+        internal virtual void Deinit()
         {
 
         }
 
-        public static Font s_Font;
+        internal static Font s_Font;
 
-        public static Material s_TextMeshMaterial;
-        public static Material s_PrimitiveMaterial;
-        public static Material s_PrimitiveMaterial_NoZTest;
+        internal static Material s_TextMeshMaterial;
 
-        public static Mesh s_BoxMesh;
-        public static Mesh s_ConeMesh;
-        public static Mesh s_CrossMesh;
-        public static Mesh s_PlaneMesh;
-        public static Mesh s_Circle;
-        public static Mesh s_CylinderMesh;
-        public static Mesh s_SphereMesh;
+        internal static Mesh s_BoxMesh;
+        internal static Mesh s_ConeMesh;
+        internal static Mesh s_CrossMesh;
+        internal static Mesh s_PlaneMesh;
+        internal static Mesh s_Circle;
+        internal static Mesh s_CylinderMesh;
+        internal static Mesh s_SphereMesh;
 
 
 
@@ -55,7 +54,7 @@ namespace XiDebugDraw.Primitives
 
         public static GUISkin menuSkin;
 
-        public static void Initialize()
+        internal static void Initialize()
         {
             s_Font = Resources.Load<Font>("XiDebugDraw/Fonts/LiberationMono");
             s_TextMeshMaterial = Resources.Load<Material>("XiDebugDraw/Materials/TextMeshMaterial");
@@ -68,13 +67,10 @@ namespace XiDebugDraw.Primitives
             s_PlaneMesh ??= PrimitiveMeshFactory.RectWireframe();
             s_Circle ??= PrimitiveMeshFactory.CircleWireframe(12);
             s_CylinderMesh ??= PrimitiveMeshFactory.CylinderWireframe(12);
-            s_SphereMesh ??= PrimitiveMeshFactory.SphereWireframe(12,12);
-            // Load materials
-            s_PrimitiveMaterial = Resources.Load<Material>("XiDebugDraw/Materials/CjLib_Primitive");
-            s_PrimitiveMaterial_NoZTest = Resources.Load<Material>("XiDebugDraw/Materials/CjLib_PrimitiveNoZTest");
+            s_SphereMesh ??= PrimitiveMeshFactory.SphereWireframe(12, 12);
         }
 
-        private static Texture2D MakeTex(int width, int height, Color col)
+        internal static Texture2D MakeTex(int width, int height, Color col)
         {
             Color[] pix = new Color[width * height];
             for (int i = 0; i < pix.Length; ++i)
@@ -87,7 +83,7 @@ namespace XiDebugDraw.Primitives
             return result;
         }
 
-        public static Mesh MakeLines(Vector3[] aVert)
+        internal static Mesh MakeLines(Vector3[] aVert)
         {
             Mesh mesh = new Mesh();
 
@@ -101,7 +97,7 @@ namespace XiDebugDraw.Primitives
             mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
             return mesh;
         }
-        public static Mesh MakeLines(Vector3[] aVert, Color[] colors)
+        internal static Mesh MakeLines(Vector3[] aVert, Color[] colors)
         {
             Mesh mesh = new Mesh();
 
@@ -117,102 +113,76 @@ namespace XiDebugDraw.Primitives
             return mesh;
         }
 
-    
-        protected static float s_wireframeZBias = 1.0e-4f;
+
+        internal static float s_wireframeZBias = 1.0e-4f;
 
 
         private static MaterialPropertyBlock s_materialProperties;
-        protected static MaterialPropertyBlock GetMaterialPropertyBlock()
+        internal static MaterialPropertyBlock GetMaterialPropertyBlock()
         {
             return (s_materialProperties != null) ? s_materialProperties : (s_materialProperties = new MaterialPropertyBlock());
         }
     }
-
-
-    public class PrimitivesPool<T> where T : Primitive, new () 
+    internal interface IBasePool
     {
-        LinkedList<Primitive> freeList = new LinkedList<Primitive> ( );
-        LinkedList<Primitive> usedList = new LinkedList<Primitive>();
+        void Release(Primitive o);
+    }
 
-        public PrimitivesPool ( int size )
+    internal class PrimitivesPool<T> : IBasePool where T : Primitive, new()
+    {
+        LinkedList<Primitive> freeList = new LinkedList<Primitive>();
+
+        internal PrimitivesPool(int size)
         {
-            for ( var i = 0 ; i < size ; i++ )
+            for (var i = 0; i < size; i++)
             {
-                object obj = new T();
-                freeList.AddFirst ( ((Primitive)obj).link );
+                var obj = new T();
+                obj.pool = this;
+                freeList.AddFirst(obj.link);
             }
         }
 
-        public LinkedList<Primitive> UsedList => usedList;
-        public LinkedList<Primitive> FreeList => freeList;
-        public T Get ( )
+        internal LinkedList<Primitive> FreeList => freeList;
+
+        internal T Get()
         {
             if (freeList.Count == 0)
             {
                 var o = new T();
-                usedList.AddFirst(o.link);
+                o.pool = this;
                 return o;
             }
             else
             {
                 var node = freeList.First;
-                node.List.Remove (node);
+                node.List.Remove(node);
                 var o = (T)(object)node.Value;
-                usedList.AddFirst(node);
                 return o;
             }
         }
-
-        public void Release ( Primitive primitive )
+        public void Release(Primitive o)
         {
-            if (primitive.link.List == usedList)
-            {
-                usedList.Remove(primitive.link);
-                freeList.AddFirst(primitive.link);
-            }
+            if (o.link.List != null)
+                o.link.List.Remove(o.link);
+            freeList.AddFirst(o.link);
         }
 
-        public int CountFree
+        internal int CountFree
         {
             get { return freeList.Count; }
         }
 
-        public void Render(float dt)
+        internal void Clear()
         {
-            var curent = usedList.First;
+            var curent = freeList.First;
             while (curent != null)
             {
                 var next = curent.Next;
-                if (curent.Value.duration >= 0)
-                {
-                    curent.Value.Render();
-                    curent.Value.duration -= dt;
-                }
-                else
-                {
-                    curent.Value.Deinit();
-                    usedList.Remove(curent);
-                    freeList.AddFirst(curent);
-                }
+                freeList.Remove(curent);
                 curent = next;
             }
-        }
-
-        public void Clear()
-        {
-            var curent = usedList.First;
-            while (curent != null)
-            {
-                var next = curent.Next;
-                usedList.Remove(curent);
-                curent = next;
-            }
-        }
-
-        public string GetStatistics()
-        {
-            return string.Format("Used: {0} Free: {1}", UsedList.Count, FreeList.Count);
         }
     }
+
 }
 

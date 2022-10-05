@@ -32,6 +32,7 @@ public class DebugDrawDemoItem : MonoBehaviour
         if (drawOnUpdate)
             Draw();
     }
+
     public void Draw()
     {
         switch (mode)

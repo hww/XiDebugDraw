@@ -3,15 +3,15 @@
 
 namespace XiDebugDraw.Primitives
 {
-    public class AABB : Primitive
+    public sealed class AABB : Primitive
     {
-        public float lineWidth = 1;
+        internal float lineWidth = 1;
         Matrix4x4 matrix;
 
         public AABB()
         {
         }
-        public void Init(Vector3 minCoords, Vector3 maxCoords, Color color, float lineWidth, float duration, bool depthEnabled)
+        internal void Init(Vector3 minCoords, Vector3 maxCoords, Color color, float lineWidth, float duration, bool depthEnabled)
         {
             var size = maxCoords - minCoords;
             var center = minCoords + (size * 0.5f);
@@ -23,13 +23,11 @@ namespace XiDebugDraw.Primitives
 
         }
 
-        public override void Render()
+        internal override void Render(Material material, MaterialPropertyBlock materialProperties)
         {
-            MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
-            materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-            materialProperties.SetFloat("_ZBias", s_wireframeZBias);
             materialProperties.SetColor("_Color", color);
-            Graphics.DrawMesh(s_BoxMesh, matrix, s_PrimitiveMaterial, 0, null, 0, materialProperties, false, false, false);
+            materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+            Graphics.DrawMesh(s_BoxMesh, matrix, material, 0, null, 0, materialProperties, false, false, false);
         }
 
     }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace XiDebugDraw.Primitives
 {
-    public class Line : Primitive
+    public sealed class Line : Primitive
     {
 
         public float lineWidth;
@@ -11,7 +11,7 @@ namespace XiDebugDraw.Primitives
         private Mesh lineMesh;
         private Vector3[] lineVerts = new Vector3[] { new Vector3(0,0,0), new Vector3(0,0,0) };
         private int[] lineIndices = new[] { 0, 1 };
-        
+
         public Line()
         {
             lineMesh ??= new Mesh();
@@ -19,7 +19,7 @@ namespace XiDebugDraw.Primitives
             lineMesh.SetIndices(lineIndices, MeshTopology.Lines, 0);
         }
 
-        public void Init(Vector3 p0, Vector3 p1, Color color, float duration, bool depthEnabled)
+        internal void Init(Vector3 p0, Vector3 p1, Color color, float duration, bool depthEnabled)
         {
             lineVerts[0] = p0;
             lineVerts[1] = p1;
@@ -30,13 +30,11 @@ namespace XiDebugDraw.Primitives
             this.depthEnabled = depthEnabled;
         }
 
-        public override void Render ( )
+        internal override void Render (Material material, MaterialPropertyBlock materialProperties)
         {
-            MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
             materialProperties.SetColor("_Color", color);
             materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-            materialProperties.SetFloat("_ZBias", s_wireframeZBias);
-            Graphics.DrawMesh(lineMesh, Matrix4x4.identity, s_PrimitiveMaterial, 0, null, 0, materialProperties, false, false, false);
+            Graphics.DrawMesh(lineMesh, Matrix4x4.identity, material, 0, null, 0, materialProperties, false, false, false);
         }
     }
 }

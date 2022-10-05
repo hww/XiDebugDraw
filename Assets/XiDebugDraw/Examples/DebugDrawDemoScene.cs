@@ -45,5 +45,10 @@ public class DebugDrawDemoScene : MonoBehaviour
         movingUpTime += Time.deltaTime * movingUpSpeed;
     }
 
-
+    private void OnGUI()
+    {
+        int used, free;
+        DebugDrawManager.GetStatistics(out used, out free);
+        GUI.Label(new Rect(10,10,100,100), $"Used {used} of {free}");
+    }
 }

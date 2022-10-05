@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace XiDebugDraw.Primitives
 {
-    public class Box : Primitive
+    public sealed class Box : Primitive
     {
         Matrix4x4 matrix;
 
@@ -12,7 +12,7 @@ namespace XiDebugDraw.Primitives
           
         }
 
-        public void Init(Vector3 position, Quaternion rotation, Vector3 size, Color color, float duration, bool depthEnabled)
+        internal void Init(Vector3 position, Quaternion rotation, Vector3 size, Color color, float duration, bool depthEnabled)
         {
             matrix = Matrix4x4.TRS(position, rotation, size);
             this.color = color;
@@ -20,13 +20,11 @@ namespace XiDebugDraw.Primitives
             this.depthEnabled = depthEnabled;
         }
 
-        public override void Render()
+        internal override void Render(Material material, MaterialPropertyBlock materialProperties)
         {
-            MaterialPropertyBlock materialProperties = GetMaterialPropertyBlock();
             materialProperties.SetVector("_Dimensions", new Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-            materialProperties.SetFloat("_ZBias", s_wireframeZBias);
             materialProperties.SetColor("_Color", color);
-            Graphics.DrawMesh(s_BoxMesh, matrix, s_PrimitiveMaterial, 0, null, 0, materialProperties, false, false, false);
+            Graphics.DrawMesh(s_BoxMesh, matrix, material, 0, null, 0, materialProperties, false, false, false);
         }
     }
 }
