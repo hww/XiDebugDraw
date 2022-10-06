@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/hww/XiDebugDraw/compare/v1.1.4...v1.1.5) (2022-10-06)
+
+
+### Bug Fixes
+
+* **code:** Text renderer replaced to GUI.Label ([399298c](https://github.com/hww/XiDebugDraw/commit/399298c29cbfd611c7cf13247fd62e0c63f7c335))
+
 ## [1.1.4](https://github.com/hww/XiDebugDraw/compare/v1.1.3...v1.1.4) (2022-10-05)
 
 
