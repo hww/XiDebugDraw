@@ -18,17 +18,20 @@ namespace XiDebugDraw.Render
             GUI.backgroundColor = backColor ?? new Color(0, 0, 0, 0.7f);
 
             Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
-            if (screenPos.y < 0 || screenPos.y > Screen.height || screenPos.x < 0 || screenPos.x > Screen.width || screenPos.z < 0)
+            if (screenPos.y >= 0 || screenPos.y <= Screen.height || 
+                screenPos.x >= 0 || screenPos.x <= Screen.width || screenPos.z >= 0)
             {
-                GUI.color = restoreTextColor;
-                UnityEditor.Handles.EndGUI();
-                return;
+
+                Vector2 labelSize = GUI.skin.label.CalcSize(new GUIContent(text));
+                var r = new Rect(
+                    screenPos.x - (labelSize.x / 2), 
+                    -screenPos.y + Camera.main.pixelHeight + 4, 
+                    labelSize.x, 
+                    labelSize.y);
+                GUI.Box(r, "", EditorStyles.numberField);
+                GUI.Label(r, text);
             }
-            var h = Camera.main.pixelHeight; //  view.position.height
-            Vector2 size = GUI.skin.label.CalcSize(new GUIContent(text));
-            var r = new Rect(screenPos.x - (size.x / 2), -screenPos.y + h + 4, size.x, size.y);
-            GUI.Box(r, "", EditorStyles.numberField);
-            GUI.Label(r, text);
+
             GUI.color = restoreTextColor;
             GUI.backgroundColor = restoreBackColor;
 
