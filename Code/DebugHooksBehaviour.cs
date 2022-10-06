@@ -7,11 +7,14 @@ namespace XiDebugDraw
 	{
 		#region Unity Methods
 
-		private void Update() => DebugDrawManager.Render();
+		void Update() => DebugDrawManager.Render();
 
         void OnEnable() => DebugDrawManager.Initialize();
 
         void OnDisable() => DebugDrawManager.Deinitialize();
+
+        void OnGUI() => DebugDrawManager.OnGUI();
+
 
         #endregion
     }

@@ -37,7 +37,8 @@ namespace XiDebugDraw
 
         static LinkedList<Primitive> s_PrimitivesDepthEnabled;
         static LinkedList<Primitive> s_PrimitivesDepthDisabled;
-        
+        static LinkedList<Primitive> s_StringsDepthEnabled;
+
         [Conditional("_DEBUG")]
         public static void Initialize()
         {
@@ -59,6 +60,7 @@ namespace XiDebugDraw
                 s_Strings = new PrimitivesPool<Text>(8);
                 s_Triangles = new PrimitivesPool<Triangle>(8);
                 s_Capsules = new PrimitivesPool<Capsule>(8);
+                s_StringsDepthEnabled = new();
                 s_PrimitivesDepthEnabled = new ();
                 s_PrimitivesDepthDisabled = new();
                 isInitialized = true;
@@ -82,6 +84,7 @@ namespace XiDebugDraw
             s_Strings.Clear();
             s_Triangles.Clear();
             s_Capsules.Clear();
+            s_StringsDepthEnabled.Clear();
             s_PrimitivesDepthEnabled.Clear();
             s_PrimitivesDepthDisabled.Clear();
             isInitialized = false;
@@ -108,7 +111,7 @@ namespace XiDebugDraw
                 s_Triangles.CountFree +
                 s_Capsules.CountFree;
 
-                used = s_PrimitivesDepthDisabled.Count + s_PrimitivesDepthEnabled.Count;
+                used = s_PrimitivesDepthDisabled.Count + s_PrimitivesDepthEnabled.Count + s_StringsDepthEnabled.Count;
             }
             else
             {
@@ -138,6 +141,7 @@ namespace XiDebugDraw
             {
                 var next = curent.Next;
                 var prim = curent.Value;
+
                 if (prim.duration >= 0)
                 {
                     prim.Render(material, materialProperties);
@@ -149,6 +153,42 @@ namespace XiDebugDraw
                     list.Remove(curent);
                     prim.pool.Release(prim);
                 }
+
+                curent = next;
+            }
+        }
+
+        internal static void OnGUI()
+        {
+            var dt = UnityEngine.Time.deltaTime;
+            var materialProperties = Primitive.GetMaterialPropertyBlock();
+            materialProperties.SetFloat("_ZBias", Primitive.s_wireframeZBias);
+
+            var materialDepthEnabled = GetMaterial(Style.Wireframe, true, false);
+            OnGUI(dt, s_StringsDepthEnabled, materialDepthEnabled, materialProperties);
+        }
+
+        private static void OnGUI(float dt, LinkedList<Primitive> list, Material material, MaterialPropertyBlock materialProperties)
+        {
+            var curent = list.First;
+
+            while (curent != null)
+            {
+                var next = curent.Next;
+                var prim = curent.Value;
+
+                if (prim.duration >= 0)
+                {
+                    prim.Render(material, materialProperties);
+                    prim.duration -= dt;
+                }
+                else
+                {
+                    prim.Deinit();
+                    list.Remove(curent);
+                    prim.pool.Release(prim);
+                }
+
                 curent = next;
             }
         }
@@ -372,7 +412,7 @@ namespace XiDebugDraw
         {
             var item = s_Strings.Get();
             item.Init(position, text, color, size, duration, depthEnabled);
-            AddPrimitive(item);
+            s_StringsDepthEnabled.AddFirst(item);
         }
     }
 }
