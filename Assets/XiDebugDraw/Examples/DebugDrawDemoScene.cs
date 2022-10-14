@@ -17,7 +17,6 @@ public class DebugDrawDemoScene : MonoBehaviour
     private float rotationTime;
     private float movingUpTime;
 
-
  
     private void Update()
     {

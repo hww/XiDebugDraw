@@ -3,14 +3,31 @@
 
 namespace XiDebugDraw.Primitives
 {
+    /// <summary>An AABB volume. This class cannot be inherited.</summary>
     public sealed class AABB : Primitive
     {
+        /// <summary>Width of the line.</summary>
         internal float lineWidth = 1;
+        /// <summary>The matrix.</summary>
         Matrix4x4 matrix;
 
+        /// <summary>Default constructor.</summary>
         public AABB()
         {
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>Initializes this object.</summary>
+        ///
+        /// <param name="minCoords">   The minimum coordinates.</param>
+        /// <param name="maxCoords">   The maximum coordinates.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="lineWidth">   Width of the line.</param>
+        /// <param name="duration">    The duration.</param>
+        /// <param name="depthEnabled"> True to enable, false to disable the
+        ///                             depth.</param>
+        ///--------------------------------------------------------------------
+
         internal void Init(Vector3 minCoords, Vector3 maxCoords, Color color, float lineWidth, float duration, bool depthEnabled)
         {
             var size = maxCoords - minCoords;
@@ -22,6 +39,13 @@ namespace XiDebugDraw.Primitives
             this.depthEnabled = depthEnabled;
 
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>Renders this object.</summary>
+        ///
+        /// <param name="material">          The material.</param>
+        /// <param name="materialProperties">The material properties.</param>
+        ///--------------------------------------------------------------------
 
         internal override void Render(Material material, MaterialPropertyBlock materialProperties)
         {
