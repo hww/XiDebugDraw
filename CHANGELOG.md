@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/hww/XiDebugDraw/compare/v1.1.5...v1.1.6) (2022-10-14)
+
+
+### Bug Fixes
+
+* **code:** Renamed pool methods. Added comments ([87594d3](https://github.com/hww/XiDebugDraw/commit/87594d3272801cd62cc2b87856556d55bff5e9d8))
+
 ## [1.1.5](https://github.com/hww/XiDebugDraw/compare/v1.1.4...v1.1.5) (2022-10-06)
 
 
