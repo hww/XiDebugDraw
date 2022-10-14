@@ -3,14 +3,31 @@ using UnityEngine;
 
 namespace XiDebugDraw.Primitives
 {
+    /// <summary>A cylinder. This class cannot be inherited.</summary>
     public sealed class Cylinder : Primitive
     {
+        /// <summary>The matrix.</summary>
         Matrix4x4 matrix;
 
+        /// <summary>Default constructor.</summary>
         public Cylinder()
         {
           
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>Initializes this object.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="rotation">    The rotation.</param>
+        /// <param name="radius">      The radius.</param>
+        /// <param name="height">      The height.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    The duration.</param>
+        /// <param name="depthEnabled"> True to enable, false to disable the
+        ///                             depth.</param>
+        ///--------------------------------------------------------------------
+
         internal void Init(Vector3 position, Quaternion rotation, float radius, float height, Color color, float duration, bool depthEnabled)
         {
             matrix = Matrix4x4.TRS(position, rotation, new Vector3(radius,height,radius));
@@ -18,6 +35,13 @@ namespace XiDebugDraw.Primitives
             this.duration = duration;
             this.depthEnabled = depthEnabled;
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>Renders this object.</summary>
+        ///
+        /// <param name="material">          The material.</param>
+        /// <param name="materialProperties">The material properties.</param>
+        ///--------------------------------------------------------------------
 
         internal override void Render(Material material, MaterialPropertyBlock materialProperties)
         {

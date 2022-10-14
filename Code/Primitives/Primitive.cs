@@ -5,35 +5,55 @@ using UnityEngine;
 
 namespace XiDebugDraw.Primitives
 {
+    ///------------------------------------------------------------------------
+    /// <summary>A renderable primitive. All primitives will be inherinced
+    /// from this class.</summary>
+    ///------------------------------------------------------------------------
 
     public class Primitive
     {
-        // fields
+        /// <summary>Fields.</summary>
         internal IBasePool pool;
+        /// <summary>The link.</summary>
         internal LinkedListNode<Primitive> link;
+        /// <summary>The duration.</summary>
         internal float duration = 0f;
+        /// <summary>True to enable, false to disable the depth.</summary>
         internal bool depthEnabled;
+        /// <summary>The color.</summary>
         internal Color color;
 
-
-        // constructors
+        /// <summary>constructors.</summary>
         public Primitive()
         {
             link = new LinkedListNode<Primitive>(this);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>Renders this object.</summary>
+        ///
+        /// <exception cref="Exception">    Thrown when an exception error
+        ///                                 condition occurs.</exception>
+        ///
+        /// <param name="material">          The material.</param>
+        /// <param name="materialProperties">The material properties.</param>
+        ///--------------------------------------------------------------------
 
         internal virtual void Render(Material material, MaterialPropertyBlock materialProperties)
         {
             throw new System.Exception();
         }
 
+        /// <summary>Deinits this object.</summary>
         internal virtual void Deinit()
         {
 
         }
 
+        /// <summary>The font.</summary>
         internal static Font s_Font;
 
+        /// <summary>The text mesh material.</summary>
         internal static Material s_TextMeshMaterial;
 
         internal static Mesh s_BoxMesh;
@@ -44,16 +64,17 @@ namespace XiDebugDraw.Primitives
         internal static Mesh s_CylinderMesh;
         internal static Mesh s_SphereMesh;
 
-
-
+        /// <summary>(Immutable) the cross lines vertices.</summary>
         private static readonly Vector3[] s_CrossLinesVertices =  {
             new(-0.5f,0,0), new(0.5f,0,0),
             new(0,-0.5f,0), new(0,0.5f,0),
             new(0,0,-0.5f), new(0,0,0.5f)
             };
 
+        /// <summary>The menu skin.</summary>
         public static GUISkin menuSkin;
 
+        /// <summary>Initializes this object.</summary>
         internal static void Initialize()
         {
             s_Font = Resources.Load<Font>("XiDebugDraw/Fonts/LiberationMono");
@@ -70,6 +91,16 @@ namespace XiDebugDraw.Primitives
             s_SphereMesh ??= PrimitiveMeshFactory.SphereWireframe(12, 12);
         }
 
+        ///--------------------------------------------------------------------
+        /// <summary>Makes a tex.</summary>
+        ///
+        /// <param name="width"> The width.</param>
+        /// <param name="height">The height.</param>
+        /// <param name="col">   The col.</param>
+        ///
+        /// <returns>A Texture2D.</returns>
+        ///--------------------------------------------------------------------
+
         internal static Texture2D MakeTex(int width, int height, Color col)
         {
             Color[] pix = new Color[width * height];
@@ -82,6 +113,14 @@ namespace XiDebugDraw.Primitives
             result.Apply();
             return result;
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>Makes the lines.</summary>
+        ///
+        /// <param name="aVert">The vertical.</param>
+        ///
+        /// <returns>A Mesh.</returns>
+        ///--------------------------------------------------------------------
 
         internal static Mesh MakeLines(Vector3[] aVert)
         {
@@ -97,6 +136,16 @@ namespace XiDebugDraw.Primitives
             mesh.SetIndices(aIndex, MeshTopology.Lines, 0);
             return mesh;
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>Makes the lines.</summary>
+        ///
+        /// <param name="aVert"> The vertical.</param>
+        /// <param name="colors">The colors.</param>
+        ///
+        /// <returns>A Mesh.</returns>
+        ///--------------------------------------------------------------------
+
         internal static Mesh MakeLines(Vector3[] aVert, Color[] colors)
         {
             Mesh mesh = new Mesh();
@@ -114,23 +163,52 @@ namespace XiDebugDraw.Primitives
         }
 
 
+        /// <summary>The wireframe z coordinate bias.</summary>
         internal static float s_wireframeZBias = 1.0e-4f;
 
 
+        /// <summary>The material properties.</summary>
         private static MaterialPropertyBlock s_materialProperties;
+
+        ///--------------------------------------------------------------------
+        /// <summary>Gets material property block.</summary>
+        ///
+        /// <returns>The material property block.</returns>
+        ///--------------------------------------------------------------------
+
         internal static MaterialPropertyBlock GetMaterialPropertyBlock()
         {
             return (s_materialProperties != null) ? s_materialProperties : (s_materialProperties = new MaterialPropertyBlock());
         }
     }
+    /// <summary>Interface for base pool.</summary>
     internal interface IBasePool
     {
-        void Release(Primitive o);
+        ///--------------------------------------------------------------------
+        /// <summary>Releases the given object.</summary>
+        ///
+        /// <param name="o">A Primitive to process.</param>
+        ///--------------------------------------------------------------------
+
+        void Free(Primitive o);
     }
+
+    ///------------------------------------------------------------------------
+    /// <summary>The primitives pool.</summary>
+    ///
+    /// <typeparam name="T">Generic type parameter.</typeparam>
+    ///------------------------------------------------------------------------
 
     internal class PrimitivesPool<T> : IBasePool where T : Primitive, new()
     {
+        /// <summary>List of free primitives.</summary>
         LinkedList<Primitive> freeList = new LinkedList<Primitive>();
+
+        ///--------------------------------------------------------------------
+        /// <summary>Constructor.</summary>
+        ///
+        /// <param name="size">The size.</param>
+        ///--------------------------------------------------------------------
 
         internal PrimitivesPool(int size)
         {
@@ -142,9 +220,21 @@ namespace XiDebugDraw.Primitives
             }
         }
 
+        ///--------------------------------------------------------------------
+        /// <summary>Gets a list of frees.</summary>
+        ///
+        /// <value>A list of frees.</value>
+        ///--------------------------------------------------------------------
+
         internal LinkedList<Primitive> FreeList => freeList;
 
-        internal T Get()
+        ///--------------------------------------------------------------------
+        /// <summary>Allocate the primitive from this pool.</summary>
+        ///
+        /// <returns>A T.</returns>
+        ///--------------------------------------------------------------------
+
+        internal T Allocate()
         {
             if (freeList.Count == 0)
             {
@@ -160,18 +250,32 @@ namespace XiDebugDraw.Primitives
                 return o;
             }
         }
-        public void Release(Primitive o)
+
+        ///--------------------------------------------------------------------
+        /// <summary>Releases the given object.</summary>
+        ///
+        /// <param name="o">A Primitive to process.</param>
+        ///--------------------------------------------------------------------
+
+        public void Free(Primitive o)
         {
             if (o.link.List != null)
                 o.link.List.Remove(o.link);
             freeList.AddFirst(o.link);
         }
 
+        ///--------------------------------------------------------------------
+        /// <summary>Gets the total number of free.</summary>
+        ///
+        /// <value>The total number of free.</value>
+        ///--------------------------------------------------------------------
+
         internal int CountFree
         {
             get { return freeList.Count; }
         }
 
+        /// <summary>Clears this object to its blank/initial state.</summary>
         internal void Clear()
         {
             var curent = freeList.First;
@@ -183,6 +287,5 @@ namespace XiDebugDraw.Primitives
             }
         }
     }
-
 }
 

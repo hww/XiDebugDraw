@@ -3,6 +3,7 @@ using XiDebugDraw;
 
 public class DebugDrawDemoItem : MonoBehaviour
 {
+    /// <summary>Values that represent modes.</summary>
     public enum Mode
     {
         Sphere, Box, Cube, Capsule, String, AABB, AOBB, Axes, Cross, Line, Ray, Trinagle, Cone, Cylinder, Circle, Plane
@@ -22,17 +23,20 @@ public class DebugDrawDemoItem : MonoBehaviour
     public BoxCollider boxCollider;
     public string text = "Hello World";
 
+    /// <summary>Called when the object becomes enabled and active.</summary>
     private void OnEnable()
     {
         DebugDrawManager.Initialize();
     }
 
+    /// <summary>Called every frame, if the MonoBehaviour is enabled.</summary>
     public void Update()
     {
         if (drawOnUpdate)
             Draw();
     }
 
+    /// <summary>Draws this object.</summary>
     public void Draw()
     {
         switch (mode)
@@ -89,6 +93,7 @@ public class DebugDrawDemoItem : MonoBehaviour
 
     }
 
+    /// <summary>Draws gizmos that are also pickable and always drawn.</summary>
     private void OnDrawGizmos()
     {
         Gizmos.DrawCube(transform.position, Vector3.one * 0.1f );

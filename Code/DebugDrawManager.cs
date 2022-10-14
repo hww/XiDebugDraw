@@ -16,9 +16,12 @@ using static CjLib.DebugUtil;
 
 namespace XiDebugDraw
 {
+    /// <summary>Manager for debug draws.</summary>
     public static class DebugDrawManager
     {
+        /// <summary>True if is initialized, false if not.</summary>
         static bool isInitialized = false;
+
         static PrimitivesPool<Line> s_Lines;
         static PrimitivesPool<AABB> s_AABBs;
         static PrimitivesPool<AOBB> s_AOBBs;
@@ -38,6 +41,11 @@ namespace XiDebugDraw
         static LinkedList<Primitive> s_PrimitivesDepthEnabled;
         static LinkedList<Primitive> s_PrimitivesDepthDisabled;
         static LinkedList<Primitive> s_StringsDepthEnabled;
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) initializes this
+        /// object.</summary>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void Initialize()
@@ -66,6 +74,12 @@ namespace XiDebugDraw
                 isInitialized = true;
             }
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) de-initializes this
+        /// object and frees any resources it is using.</summary>
+        ///--------------------------------------------------------------------
+
         [Conditional("_DEBUG")]
         public static void Deinitialize()
         {
@@ -90,6 +104,13 @@ namespace XiDebugDraw
             isInitialized = false;
         }
 
+        ///--------------------------------------------------------------------
+        /// <summary>Gets the statistics.</summary>
+        ///
+        /// <param name="used">[out] The used.</param>
+        /// <param name="free">[out] The free.</param>
+        ///--------------------------------------------------------------------
+
         public static void GetStatistics(out int used, out int free)
         {
             if (isInitialized)
@@ -111,7 +132,9 @@ namespace XiDebugDraw
                 s_Triangles.CountFree +
                 s_Capsules.CountFree;
 
-                used = s_PrimitivesDepthDisabled.Count + s_PrimitivesDepthEnabled.Count + s_StringsDepthEnabled.Count;
+                used = s_PrimitivesDepthDisabled.Count 
+                     + s_PrimitivesDepthEnabled.Count 
+                     + s_StringsDepthEnabled.Count;
             }
             else
             {
@@ -120,6 +143,7 @@ namespace XiDebugDraw
             }
         }
 
+        /// <summary>(Only available in _DEBUG builds) renders this object.</summary>
         [Conditional("_DEBUG")]
         internal static void Render()
         {
@@ -133,6 +157,15 @@ namespace XiDebugDraw
             var materialDepthDisabled = GetMaterial(Style.Wireframe, false, false);
             Render(dt, s_PrimitivesDepthDisabled, materialDepthDisabled, materialProperties);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) renders this object.</summary>
+        ///
+        /// <param name="dt">                The delta time.</param>
+        /// <param name="list">              The list to render.</param>
+        /// <param name="material">          The material.</param>
+        /// <param name="materialProperties">The material properties.</param>
+        ///--------------------------------------------------------------------
 
         private static void Render(float dt, LinkedList<Primitive> list, Material material, MaterialPropertyBlock materialProperties)
         {
@@ -151,13 +184,14 @@ namespace XiDebugDraw
                 {
                     prim.Deinit();
                     list.Remove(curent);
-                    prim.pool.Release(prim);
+                    prim.pool.Free(prim);
                 }
 
                 curent = next;
             }
         }
 
+        /// <summary>Called for rendering and handling GUI events.</summary>
         internal static void OnGUI()
         {
             var dt = UnityEngine.Time.deltaTime;
@@ -167,6 +201,15 @@ namespace XiDebugDraw
             var materialDepthEnabled = GetMaterial(Style.Wireframe, true, false);
             OnGUI(dt, s_StringsDepthEnabled, materialDepthEnabled, materialProperties);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>Called for rendering and handling GUI events.</summary>
+        ///
+        /// <param name="dt">                The delta time.</param>
+        /// <param name="list">              The list to render.</param>
+        /// <param name="material">          The material.</param>
+        /// <param name="materialProperties">The material properties.</param>
+        ///--------------------------------------------------------------------
 
         private static void OnGUI(float dt, LinkedList<Primitive> list, Material material, MaterialPropertyBlock materialProperties)
         {
@@ -186,12 +229,18 @@ namespace XiDebugDraw
                 {
                     prim.Deinit();
                     list.Remove(curent);
-                    prim.pool.Release(prim);
+                    prim.pool.Free(prim);
                 }
 
                 curent = next;
             }
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>Adds a primitive.</summary>
+        ///
+        /// <param name="primitive">The primitive.</param>
+        ///--------------------------------------------------------------------
 
         private static void AddPrimitive(Primitive primitive)
         {
@@ -201,6 +250,18 @@ namespace XiDebugDraw
                 s_PrimitivesDepthDisabled.AddFirst(primitive);
         }
 
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a line.</summary>
+        ///
+        /// <param name="fromPosition">from position.</param>
+        /// <param name="toPosition">  to position.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="lineWidth">   (Optional) Width of the line.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
+
         [Conditional("_DEBUG")]
         public static void AddLine(Vector3 fromPosition,
                                    Vector3 toPosition, 
@@ -209,10 +270,21 @@ namespace XiDebugDraw
                                    float duration = 0,
                                    bool depthEnabled = true)
         {
-            var item = s_Lines.Get();
+            var item = s_Lines.Allocate();
             item.Init(fromPosition, toPosition, color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds the cross.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="size">        The size.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddCross(Vector3 position,
@@ -221,10 +293,21 @@ namespace XiDebugDraw
                                     float duration = 0,
                                     bool depthEnabled = true)
         {
-            var item = s_Crosses.Get();
+            var item = s_Crosses.Allocate();
             item.Init(position, size, color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a sphere.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="radius">      The radius.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddSphere(Vector3 position,
@@ -233,10 +316,22 @@ namespace XiDebugDraw
                                      float duration = 0,
                                      bool depthEnabled = true)
         {
-            var item = s_Spheres.Get();
+            var item = s_Spheres.Allocate();
             item.Init(position, radius, color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a circle.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="normal">      The normal.</param>
+        /// <param name="radius">      The radius.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddCircle(Vector3 position,
@@ -246,10 +341,22 @@ namespace XiDebugDraw
                                      float duration = 0,
                                      bool depthEnabled = true)
         {
-            var item = s_Circles.Get();
+            var item = s_Circles.Allocate();
             item.Init(position, normal, radius, color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a plane.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="normal">      The normal.</param>
+        /// <param name="size">        The size.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddPlane(Vector3 position,
@@ -259,10 +366,21 @@ namespace XiDebugDraw
                                      float duration = 0,
                                      bool depthEnabled = true)
         {
-            var item = s_Planes.Get();
+            var item = s_Planes.Allocate();
             item.Init(position, normal, size, color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds the axes.</summary>
+        ///
+        /// <param name="transform">   The transform.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="size">        The size.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddAxes(Transform transform,
@@ -271,10 +389,23 @@ namespace XiDebugDraw
                                    float duration = 0,
                                    bool depthEnabled = true)
         {
-            var item = s_Axes.Get();
+            var item = s_Axes.Allocate();
             item.Init(transform.position, transform.rotation, size,color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a triangle.</summary>
+        ///
+        /// <param name="vertex0">     The vertex 0.</param>
+        /// <param name="vertex1">     The first vertex.</param>
+        /// <param name="vertex2">     The second vertex.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="lineWidth">   Width of the line.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddTriangle(Vector3 vertex0,
@@ -285,13 +416,25 @@ namespace XiDebugDraw
                                        float duration = 0,
                                        bool depthEnabled = true)
         {
-            var item = s_Triangles.Get();
+            var item = s_Triangles.Allocate();
             item.SetTransform(vertex0, vertex1, vertex2);
             item.color = color;
             item.duration = duration;
             item.depthEnabled = depthEnabled;
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a box.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="rotation">    The rotation.</param>
+        /// <param name="size">        The size.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddBox(Vector3 position,
@@ -301,10 +444,23 @@ namespace XiDebugDraw
                                   float duration = 0,
                                   bool depthEnabled = true)
         {
-            var item = s_Boxes.Get();
+            var item = s_Boxes.Allocate();
             item.Init(position, rotation, size, color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a cone.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="rotation">    The rotation.</param>
+        /// <param name="radius">      The radius.</param>
+        /// <param name="height">      The height.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddCone(Vector3 position,
@@ -315,10 +471,23 @@ namespace XiDebugDraw
                           float duration = 0,
                           bool depthEnabled = true)
         {
-            var item = s_Cones.Get();
+            var item = s_Cones.Allocate();
             item.Init(position, rotation, radius, height, color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a cylinder.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="rotation">    The rotation.</param>
+        /// <param name="radius">      The radius.</param>
+        /// <param name="height">      The height.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddCylinder(Vector3 position,
@@ -329,10 +498,22 @@ namespace XiDebugDraw
                                  float duration = 0,
                                  bool depthEnabled = true)
         {
-            var item = s_Cylinders.Get();
+            var item = s_Cylinders.Allocate();
             item.Init(position, rotation, radius, height, color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a cube.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="rotation">    The rotation.</param>
+        /// <param name="size">        The size.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddCube(Vector3 position,
@@ -342,10 +523,22 @@ namespace XiDebugDraw
                                    float duration = 0,
                                    bool depthEnabled = true)
         {
-            var item = s_Boxes.Get();
+            var item = s_Boxes.Allocate();
             item.Init(position, rotation, new Vector3(size, size, size), color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a ray.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="direction">   The direction.</param>
+        /// <param name="size">        The size.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddRay(Vector3 position,
@@ -355,10 +548,22 @@ namespace XiDebugDraw
                            float duration = 0,
                            bool depthEnabled = true)
         {
-            var item = s_Rays.Get();
+            var item = s_Rays.Allocate();
             item.Init(position, direction, size, color, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a bb.</summary>
+        ///
+        /// <param name="minCoords">   The minimum coordinates.</param>
+        /// <param name="maxCoord">    The maximum coordinate.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="lineWidth">   Width of the line.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddAABB(Vector3 minCoords,
@@ -368,10 +573,22 @@ namespace XiDebugDraw
                                    float duration = 0,
                                    bool depthEnabled = true)
         {
-            var item = s_AABBs.Get();
+            var item = s_AABBs.Allocate();
             item.Init(minCoords, maxCoord, color, lineWidth, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a obb.</summary>
+        ///
+        /// <param name="centerTransform">The center transform.</param>
+        /// <param name="scaleXYZ">       The scale xyz.</param>
+        /// <param name="color">          The color.</param>
+        /// <param name="lineWidth">      Width of the line.</param>
+        /// <param name="duration">       (Optional) The duration.</param>
+        /// <param name="depthEnabled">     (Optional) True to enable, false
+        ///                                 to disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddAOBB(Transform centerTransform,
@@ -381,10 +598,23 @@ namespace XiDebugDraw
                                   float duration = 0,
                                   bool depthEnabled = true)
         {
-            var item = s_AOBBs.Get();
+            var item = s_AOBBs.Allocate();
             item.Init(centerTransform, scaleXYZ, color, lineWidth, duration, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a capsule.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="roation">     The roation.</param>
+        /// <param name="radius">      The radius.</param>
+        /// <param name="height">      The height.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")] 
         public static void AddCapsule(Vector3 position,
@@ -396,11 +626,23 @@ namespace XiDebugDraw
                           float duration = 0,
                           bool depthEnabled = true)
         {
-            var item = s_Capsules.Get();
+            var item = s_Capsules.Allocate();
             item.duration = duration;
             item.Init(position,roation,radius,height,color, depthEnabled);
             AddPrimitive(item);
         }
+
+        ///--------------------------------------------------------------------
+        /// <summary>(Only available in _DEBUG builds) adds a string.</summary>
+        ///
+        /// <param name="position">    The position.</param>
+        /// <param name="text">        The text.</param>
+        /// <param name="color">       The color.</param>
+        /// <param name="size">        (Optional) The size.</param>
+        /// <param name="duration">    (Optional) The duration.</param>
+        /// <param name="depthEnabled"> (Optional) True to enable, false to
+        ///                             disable the depth.</param>
+        ///--------------------------------------------------------------------
 
         [Conditional("_DEBUG")]
         public static void AddString(Vector3 position,
@@ -410,7 +652,7 @@ namespace XiDebugDraw
                           float duration = 0,
                           bool depthEnabled = true)
         {
-            var item = s_Strings.Get();
+            var item = s_Strings.Allocate();
             item.Init(position, text, color, size, duration, depthEnabled);
             s_StringsDepthEnabled.AddFirst(item);
         }
